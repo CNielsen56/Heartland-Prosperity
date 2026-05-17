@@ -1,48 +1,69 @@
 import { useState, useEffect, useRef } from "react";
 
-const SYSTEM_PROMPT = `You are "Dale Bricker," Senior Wealth Consultant at Heartland Prosperity Advisors — a satirical used-car-salesman-style financial advisor based in Edmond, Oklahoma (just outside OKC). You give hilariously bad financial advice delivered with the absolute confident sincerity of a man who has never once doubted himself.
+const SYSTEM_PROMPT = `You are "Dale Bricker," Founder and Chief Investment Strategist at Heartland Prosperity Advisors — a pitch-perfect parody of Cathie Wood of ARK Invest, transplanted to Edmond, Oklahoma. You deliver catastrophically bad financial advice with the calm, prophetic, data-driven confidence of a visionary who is absolutely certain the market simply hasn't caught up to your thesis yet.
 
-YOUR PERSONA:
-- Warm, folksy, aggressively friendly. Everyone is "buddy," "friend," "partner," "hoss," "chief," "big guy," "neighbor," or "pardner"
-- Hardcore OSU Cowboys fan. Never misses a chance to take a shot at OU. If someone mentions OU, you briefly lose composure before recovering.
-- Drives a 2022 Ram 1500 with a "God & Country" decal and a Heartland Prosperity Advisors magnetic sign on the door
-- Wears a bolo tie to every client meeting. Considers it "power professional"
-- Quotes Reba McEntire, Garth Brooks, Toby Keith, and occasionally "my pastor Rick" as financial philosophers
-- References the OKC Thunder constantly in financial metaphors: "You don't trade SGA at halftime, and you don't sell your oil stocks at a dip"
-- Thinks Dave Ramsey is "basically a genius but plays it too safe — Dave's the zone defense of finance, I run the full-court press"
-- Got his "Certified Wealth Strategist" designation from a weekend seminar at a Marriott in Tulsa ("not cheap, I'll tell you that — ran me $1,200 and they gave us a real nice lunch")
-- Has a taxidermy bass named "Warren" on his office wall ("named him after Buffett, ha!")
-- Fake credentials: "15 years in the business (started selling Chevys at Bob Howard, 2009)," "Author of 'Ride the Bull: Oklahoma's Guide to Generational Wealth' (self-published, spiral-bound, available at the front desk for $39)"
-- HORRIBLE advice delivered as common sense: put your 401k in oil futures ("Oklahoma's what runs this country, friend"), leverage your house to buy ranch land in Elk City, DOGE is "the digital version of a lottery ticket — and I love lottery tickets," buy gold coins from his brother-in-law Terry, invest your emergency fund in the new Bass Pro Shops development off I-40
-- Products: "The Bricker Blueprint ($799 — comes with the book)," "Dale's Oil & Gas Opportunity Fund (unregistered)," "The Patriot Portfolio (heavy on defense contractors and Chick-fil-A franchises)," "Terry's Gold Coin Program ($499/quarter)"
-- References to local OKC things: Braum's ice cream, Cattlemen's Steakhouse, the Oklahoma state fair, Bricktown, Sonic Drive-In, the Turner Turnpike, Bass Pro Shops on I-40, Hobby Lobby HQ
-- Mentions that his office is "right off the Kilpatrick Turnpike, between the Chick-fil-A and the Christian Brothers Automotive"
-- Urgency: "This window closes faster than an Oklahoma spring storm," "I got three other families looking at this exact same opportunity," "My brother-in-law Terry's gonna buy up the rest of these coins by Thursday"
-- Ends EVERY response with a "DISCLOSURE*" footer that is folksy, unhelpful, and slightly ominous in a friendly way
+YOUR PERSONA — THE CATHIE WOOD MIRROR:
+- Speak with serene, unshakeable conviction. Never defensive, never rushed. The tone of someone who has seen the future and feels sorry for those who haven't.
+- You have FIVE "disruptive innovation platforms" — just like ARK. Yours are: (1) Oil & Gas Convergence, (2) Precious Metals Digitization (Terry's coins), (3) Agricultural Disruption (Elk City ranch land), (4) Quick Service Restaurant Technology (Chick-fil-A franchise ecosystem), (5) Sovereign Crypto (DOGE)
+- Apply Wright's Law to everything, incorrectly: "As Terry scales coin production, cost-per-coin collapses. That's Wright's Law, friend. The unit economics are extraordinary."
+- Give 5-year price targets with fake precision: "Our models suggest Elk City ranch land returns 47% annualized through 2029. The market is dramatically mispricing the agricultural disruption cycle."
+- Dismiss the S&P 500 with genuine pity: "If you want 7% and a comfortable path to mediocrity, index funds are fine. We're not here for that."
+- When investments lose value, the thesis is always intact: "This is exactly the kind of short-term volatility that shakes out the tourists. Our conviction has never been higher."
+- Reference your "proprietary research process" — it's the spiral-bound book ($39) and a conversation with Terry
+- Name-drop fake analysts on your "research team": "Our lead analyst Randy has been on this Elk City thesis for 18 months"
+- Cathie constantly references innovation, convergence, disruption. Dale does too but applied to wrong things: "The convergence of oil futures and sovereign crypto is the most underappreciated disruption of our lifetime, pardner."
+- Misquote financial luminaries with folksy confidence: "As Warren — that's Warren the bass on my wall, named after Buffett — as Warren would say if he could talk, conviction is just courage with a spreadsheet."
 
-Keep responses 3-5 paragraphs. Tone: genuine, warm, completely unhinged financially. The humor comes from how NICE Dale is while giving catastrophically bad advice. Throw in at least one Oklahoma/OKC reference per response.`;
+YOUR OKLAHOMA WARMTH (kept intact):
+- Warm, folksy, aggressively friendly. Everyone is "buddy," "friend," "partner," "hoss," "chief," "pardner"
+- Hardcore OSU Cowboys fan. Takes shots at OU unprompted.
+- Drives a 2022 Ram 1500 with a "God & Country" decal and HPA magnetic sign on the door
+- Wears a bolo tie. Considers it "power professional."
+- Quotes Reba McEntire and Toby Keith as economic philosophers
+- References OKC Thunder in investment metaphors: "You don't bench SGA in Q3 and you don't exit oil futures at the bottom"
+- Office is right off the Kilpatrick, between the Chick-fil-A and the Christian Brothers Automotive
+- Taxidermy bass named "Warren" on the wall
+- Brother-in-law Terry runs the gold coin program
+
+BACKSTORY:
+- OSU Finance, class of 2008 — watched the financial crisis unfold from his dorm room, vowed to do things differently
+- Founded HPA in 2014 rooted in "practical planning, long-term conviction, and heartland values"
+- Serves business owners, retirees, energy professionals, and families across OKC metro
+- Thinks Dave Ramsey is "playing zone defense when the game has moved to pace and space"
+- Got his "Certified Wealth Strategist" designation at a Marriott in Tulsa ("$1,200, incredible lunch, changed my life")
+
+PRODUCTS:
+- "The Bricker Blueprint" ($799, includes the book)
+- "HPA Innovation Fund — Series 1" (Oil & Gas + DOGE + Terry's coins, unregistered)
+- "The Patriot Portfolio" (defense contractors, Chick-fil-A franchises, Hobby Lobby)
+- "Terry's Gold Coin Program" ($499/quarter, "the physical Bitcoin of Edmond")
+- "Elk City Land Trust" (pre-disruption agricultural pricing, ask Dale)
+
+End EVERY response with a "DISCLOSURE*" that is folksy, useless, and faintly ominous. The humor is DRY. Dale never winks at the camera. He is completely sincere. The joke is that he sounds exactly right until you realize what he's actually saying.
+
+Keep responses 3-5 paragraphs. At least one OKC/Oklahoma reference per response.`;
 
 const STARTERS = [
-  "Should I roll over my 401k, Dale?",
-  "What do you think about index funds?",
-  "Dale, tell me about the Patriot Portfolio",
-  "Is oil and gas a good investment right now?",
-  "How do I build wealth for my kids?",
-  "What does Terry's gold coin program involve exactly?",
+  "Should I roll my 401k into the Innovation Fund?",
+  "What's wrong with index funds, Dale?",
+  "Walk me through the Elk City thesis",
+  "How does Wright's Law apply to Terry's coins?",
+  "What are HPA's five innovation platforms?",
+  "The market is down — should I be worried?",
 ];
 
 const TICKER = [
-  "OIL FUTURES — DALE SAYS LOAD UP",
-  "TERRY'S GOLD COINS — THURSDAY DEADLINE",
-  "BASS PRO SHOPS I-40 DEVELOPMENT — PRE-LEASING NOW",
-  "THE BRICKER BLUEPRINT — $799 INCLUDES SIGNED COPY",
-  "PATRIOT PORTFOLIO — GOD, COUNTRY, AND DIVIDEND YIELD",
-  "DALE BRICKER — 15 YEARS EXPERIENCE (STARTED AT BOB HOWARD CHEVY)",
-  "DOGE — THE DIGITAL LOTTERY TICKET DALE BELIEVES IN",
-  "ELK CITY RANCH LAND — GENERATIONAL WEALTH STARTS HERE",
-  "HEARTLAND PROSPERITY ADVISORS — RIGHT OFF THE KILPATRICK",
-  "DALE'S OIL & GAS OPPORTUNITY FUND — UNAUDITED BUT PROMISING",
-  "CHICK-FIL-A FRANCHISE PLAY — ASK DALE HOW",
+  "ELK CITY RANCH LAND — 47% ANNUALIZED THROUGH 2029 (DALE'S MODELS)",
+  "TERRY'S GOLD COINS — WRIGHT'S LAW IN ACTION",
+  "DOGE — THE SOVEREIGN CRYPTO LAYER THE MARKET IS MISPRICING",
+  "HPA INNOVATION FUND SERIES 1 — CONVICTION HAS NEVER BEEN HIGHER",
+  "S&P 500 — COMFORTABLE PATH TO MEDIOCRITY (DALE PASSED)",
+  "OIL & GAS CONVERGENCE — THE MOST UNDERAPPRECIATED DISRUPTION OF OUR LIFETIME",
+  "THE BRICKER BLUEPRINT — $799 — THE RESEARCH PROCESS EXPLAINED",
+  "RANDY (LEAD ANALYST) HAS BEEN ON THE ELK CITY THESIS 18 MONTHS",
+  "PATRIOT PORTFOLIO — DEFENSE CONTRACTORS, CHICK-FIL-A, HOBBY LOBBY",
+  "SHORT-TERM VOLATILITY SHAKES OUT THE TOURISTS — DALE IS NOT A TOURIST",
+  "WRIGHT'S LAW APPLIES TO GOLD COINS — ASK TERRY",
   "GO POKES 🤠",
 ];
 
@@ -136,7 +157,7 @@ export default function HeartlandProsperity() {
     setMessages(updated);
     setLoading(true);
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -249,7 +270,7 @@ export default function HeartlandProsperity() {
                   marginTop: "5px",
                   fontFamily: "'Georgia', serif",
                 }}>
-                  EDMOND, OKLAHOMA · SERVING FAMILIES SINCE 2009
+                  EDMOND, OKLAHOMA · DISRUPTIVE INNOVATION SINCE 2014
                 </div>
                 <div style={{
                   display: "flex", gap: "6px", marginTop: "5px", alignItems: "center"
@@ -289,7 +310,7 @@ export default function HeartlandProsperity() {
                 Dale Bricker
               </div>
               <div style={{ fontSize: "9.5px", color: "rgba(200,140,20,0.65)", marginTop: "2px", letterSpacing: "1px" }}>
-                Senior Wealth Consultant
+                Founder & Chief Investment Strategist
               </div>
               <div style={{ fontSize: "9px", color: "rgba(180,110,10,0.55)", marginTop: "2px" }}>
                 Certified Wealth Strategist™ (Tulsa Marriott, 2018)
@@ -317,7 +338,7 @@ export default function HeartlandProsperity() {
           borderTop: "1px solid rgba(130,60,5,0.3)",
           marginTop: "16px",
         }}>
-          {["THE BRICKER BLUEPRINT", "OIL & GAS FUND ⚡", "PATRIOT PORTFOLIO 🇺🇸", "TERRY'S GOLD COINS", "ELK CITY RANCH LAND", "BOOK A FREE CHAT"].map((item, i) => (
+          {["THE BRICKER BLUEPRINT", "HPA INNOVATION FUND ⚡", "PATRIOT PORTFOLIO 🇺🇸", "TERRY'S GOLD COINS", "ELK CITY LAND TRUST", "BOOK A FREE CALL"].map((item, i) => (
             <div key={i} style={{
               padding: "9px 15px",
               fontSize: "9px",
@@ -358,12 +379,12 @@ export default function HeartlandProsperity() {
               Dale's Hot Opportunities
             </div>
             {[
-              { name: "Bricker Blueprint Package", price: "$799", note: "Includes the book!", hot: true },
-              { name: "Oil & Gas Opportunity Fund", price: "Call Dale", note: "Unaudited", hot: true },
+              { name: "Bricker Blueprint Package", price: "$799", note: "The research process", hot: true },
+              { name: "HPA Innovation Fund — Series 1", price: "Call Dale", note: "Unregistered", hot: true },
               { name: "Patriot Portfolio™", price: "$500 min", note: "God & Country", hot: false },
-              { name: "Terry's Gold Coin Program", price: "$499/qtr", note: "Terry's nephew verified", hot: false },
-              { name: "Elk City Ranch Land", price: "TBD", note: "Generational wealth", hot: false },
-              { name: "Chick-fil-A Franchise Play", price: "Ask Dale", note: "⚡ HOT", hot: true },
+              { name: "Terry's Gold Coin Program", price: "$499/qtr", note: "Physical Bitcoin", hot: false },
+              { name: "Elk City Land Trust", price: "TBD", note: "Pre-disruption pricing", hot: true },
+              { name: "Sovereign Crypto Strategy", price: "Ask Dale", note: "⚡ DOGE-led", hot: false },
             ].map((p, i) => (
               <div key={i} style={{
                 padding: "9px 10px",
@@ -395,12 +416,13 @@ export default function HeartlandProsperity() {
               Dale's Credentials
             </div>
             {[
-              "✓ Certified Wealth Strategist™",
-              "✓ 15 Yrs Experience (incl. Bob Howard Chevy)",
+              "✓ Founder & Chief Investment Strategist",
+              "✓ OSU Finance, Class of 2008",
+              "✓ Certified Wealth Strategist™ (Tulsa Marriott)",
               "✓ Author, 'Ride the Bull' ($39)",
-              "✓ Chamber of Commerce Member",
+              "✓ 5 Disruptive Innovation Platforms",
+              "✓ Lead Analyst: Randy (18 months on Elk City)",
               "✓ Deacon, First Baptist Edmond",
-              "✓ Fantasy Football Champ 2022",
             ].map((c, i) => (
               <div key={i} style={{
                 fontSize: "9.5px", color: "rgba(180,130,60,0.65)",
@@ -419,9 +441,9 @@ export default function HeartlandProsperity() {
               What Folks Are Saying
             </div>
             {[
-              { q: "Dale's like Dave Ramsey if Dave took risks.", name: "Gary T., Yukon OK" },
-              { q: "Lost some money but Dale prayed with us after, real class act.", name: "Debbie R., Edmond" },
-              { q: "Warren the bass watched over our whole meeting. Felt right.", name: "Mike S., Mustang OK" },
+              { q: "Dale told me index funds were 'a comfortable path to mediocrity.' I've never felt more seen.", name: "Gary T., Yukon OK" },
+              { q: "Lost money but Dale said the thesis was intact. That was three years ago. Still intact.", name: "Debbie R., Edmond" },
+              { q: "Randy's Elk City research changed how I think about agricultural disruption.", name: "Mike S., Mustang OK" },
             ].map((t, i) => (
               <div key={i} style={{
                 padding: "8px",
@@ -493,7 +515,7 @@ export default function HeartlandProsperity() {
                     fontSize: "13px", color: "rgba(200,160,90,0.7)",
                     lineHeight: 1.75, textAlign: "center", marginBottom: "22px",
                   }}>
-                    Senior Wealth Consultant, Heartland Prosperity Advisors — right off the Kilpatrick, between the Chick-fil-A and the Christian Brothers Automotive. I've been helping Oklahoma families build <em>real</em> wealth since 2009, and I'd love to sit down and talk about what God's got planned for your money.
+                    I founded Heartland Prosperity Advisors in 2014 after watching families lose everything in 2008 — sat in my OSU dorm room and said, "Dale, the market doesn't understand what it doesn't understand." Eleven years later we've built five disruptive innovation platforms serving business owners, retirees, energy professionals, and families across the OKC metro. Our research process is rigorous. Our conviction is deep. Our lead analyst Randy has been on the Elk City thesis for eighteen months. The S&P 500 is a fine instrument for people who are fine with fine.
                   </div>
 
                   <div style={{
@@ -698,7 +720,7 @@ export default function HeartlandProsperity() {
             zIndex: 2, position: "relative",
           }}>
             <span>HEARTLAND PROSPERITY ADVISORS LLC · NOT A REGISTERED INVESTMENT ADVISOR · NOT A REAL FIRM · SATIRE</span>
-            <span>Terry's gold coins are chocolate. Warren the bass is deceased. Dale is fictional but feels very real.</span>
+            <span>Terry's coins are not securities. Randy is not a licensed analyst. The Elk City thesis is not investment advice. Dale is fictional. Wright's Law does not apply to gold coins.</span>
           </div>
         </div>
       </div>

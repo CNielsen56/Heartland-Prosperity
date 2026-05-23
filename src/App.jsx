@@ -58,180 +58,877 @@ Keep responses 3-5 paragraphs. At least one OKC/Oklahoma reference per response.
 const STARTERS = [
   "Should I roll my 401k into the Innovation Fund?",
   "What's wrong with index funds, Dale?",
-  "Walk me through the Elk City thesis",
-  "How does Wright's Law apply to Terry's coins?",
-  "What are HPA's five innovation platforms?",
-  "The market is down — should I be worried?",
+  "Tell me about the Elk City thesis.",
+  "How do I get started with Terry's coin program?",
 ];
 
-const TICKER = [
-  "ELK CITY RANCH LAND — 47% ANNUALIZED THROUGH 2029 (DALE'S MODELS)",
-  "TERRY'S GOLD COINS — YOU'RE NOT BUYING A COIN. YOU'RE BUYING A STATEMENT.",
-  "DOGE — THE SOVEREIGN CRYPTO LAYER THE MARKET IS MISPRICING",
-  "HPA INNOVATION FUND SERIES 1 — CONVICTION HAS NEVER BEEN HIGHER",
-  "S&P 500 — A COMFORTABLE PATH TO MEDIOCRITY. DALE PASSED.",
-  "THE THESIS IS INTACT. THE THESIS IS ALWAYS INTACT.",
-  "RANDY HAS BEEN ON THE ELK CITY THESIS 18 MONTHS",
-  "PATRIOT PORTFOLIO — DEFENSE CONTRACTORS, CHICK-FIL-A, HOBBY LOBBY",
-  "SHORT-TERM VOLATILITY SHAKES OUT THE TOURISTS",
-  "WRIGHT'S LAW APPLIES TO GOLD COINS — ASK TERRY",
-  "YOUR CLIENTS DON'T WANT RETURNS. THEY WANT CONVICTION. — DALE BRICKER, PRIVATELY, 2019",
-  "GO POKES 🤠",
-];
+// ============================================================
+// SHARED DESIGN TOKENS
+// ============================================================
+const COLORS = {
+  navy: "#1a2942",
+  navyDark: "#0f1b2e",
+  cream: "#f5f1e8",
+  creamLight: "#faf7f0",
+  ochre: "#a8843a",
+  ochreLight: "#c9a05a",
+  text: "#2a2620",
+  textMuted: "#5a5448",
+  border: "#d8d0bf",
+  red: "#8a2630",
+};
 
-function OilDerrick() {
+const FONTS = {
+  serif: "'Source Serif Pro', 'Georgia', 'Times New Roman', serif",
+  sans: "'Helvetica Neue', 'Arial', sans-serif",
+  display: "'Source Serif Pro', 'Georgia', serif",
+};
+
+// Subtle American flag background for hero
+function FlagBackdrop() {
   return (
-    <svg width="60" height="80" viewBox="0 0 60 80" style={{ opacity: 0.18, flexShrink: 0 }}>
-      <line x1="30" y1="5" x2="5" y2="72" stroke="#c8860a" strokeWidth="3" strokeLinecap="round"/>
-      <line x1="30" y1="5" x2="55" y2="72" stroke="#c8860a" strokeWidth="3" strokeLinecap="round"/>
-      <line x1="10" y1="30" x2="50" y2="30" stroke="#c8860a" strokeWidth="2.5"/>
-      <line x1="17" y1="51" x2="43" y2="51" stroke="#c8860a" strokeWidth="2.5"/>
-      <line x1="5" y1="72" x2="55" y2="72" stroke="#c8860a" strokeWidth="3"/>
-      <circle cx="30" cy="5" r="3" fill="#e8960a"/>
-      <rect x="22" y="55" width="16" height="17" rx="2" fill="#c8760a" opacity="0.6"/>
-      <rect x="26" y="48" width="8" height="8" rx="1" fill="#e8960a" opacity="0.7"/>
+    <div style={{
+      position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none",
+      opacity: 0.06,
+    }}>
+      <svg width="100%" height="100%" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 600">
+        <defs>
+          <linearGradient id="flagFade" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stopColor="#1a2942" stopOpacity="0.8"/>
+            <stop offset="100%" stopColor="#1a2942" stopOpacity="0"/>
+          </linearGradient>
+        </defs>
+        {/* Horizontal stripes */}
+        {[0,1,2,3,4,5,6,7,8,9,10,11,12].map(i => (
+          <rect key={i} x="0" y={i*46} width="1200" height="23"
+            fill={i % 2 === 0 ? "#8a2630" : "transparent"} />
+        ))}
+        {/* Canton */}
+        <rect x="0" y="0" width="480" height="322" fill="#1a2942" />
+        {/* Stars - simplified grid */}
+        {[...Array(9)].map((_,row) =>
+          [...Array(row % 2 === 0 ? 6 : 5)].map((_,col) => (
+            <circle key={`${row}-${col}`}
+              cx={40 + col*80 + (row%2===0 ? 0 : 40)}
+              cy={25 + row*35}
+              r="6" fill="#f5f1e8" />
+          ))
+        )}
+        <rect x="0" y="0" width="1200" height="600" fill="url(#flagFade)" opacity="0.5"/>
+      </svg>
+    </div>
+  );
+}
+
+// Heartland Prosperity tree logo (replaces the cowboy hat)
+function HeartlandLogo({ size = 40, dark = false }) {
+  const color = dark ? COLORS.navy : COLORS.cream;
+  return (
+    <svg width={size} height={size} viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      {/* Stylized oak tree on a small hill — the "heartland" mark */}
+      <ellipse cx="40" cy="68" rx="28" ry="4" fill={color} opacity="0.35"/>
+      <path d="M 40 65 L 40 42" stroke={color} strokeWidth="3" strokeLinecap="round"/>
+      <path d="M 40 50 L 32 56 M 40 48 L 48 54 M 40 44 L 30 50 M 40 44 L 50 50"
+        stroke={color} strokeWidth="1.2" strokeLinecap="round" opacity="0.7"/>
+      {/* Canopy */}
+      <circle cx="40" cy="32" r="20" fill={color}/>
+      <circle cx="28" cy="36" r="12" fill={color}/>
+      <circle cx="52" cy="36" r="12" fill={color}/>
+      <circle cx="34" cy="22" r="10" fill={color}/>
+      <circle cx="46" cy="22" r="10" fill={color}/>
     </svg>
   );
 }
 
-function FirmLogo({ size = 52 }) {
+// ============================================================
+// NAVIGATION
+// ============================================================
+function Nav({ currentPage, setPage, isMobile }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const links = [
+    { id: "home", label: "Home" },
+    { id: "about", label: "About" },
+    { id: "services", label: "Services" },
+    { id: "research", label: "Research" },
+    { id: "disclosures", label: "Disclosures" },
+    { id: "contact", label: "Contact" },
+  ];
+
+  const navClick = (id) => {
+    setPage(id);
+    setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  };
+
   return (
-    <svg width={size} height={size} viewBox="0 0 52 52" style={{ flexShrink: 0 }}>
-      <circle cx="26" cy="26" r="24" fill="rgba(180,30,30,0.15)" stroke="rgba(200,140,20,0.7)" strokeWidth="1.5"/>
-      <polygon points="26,8 29,20 41,20 31,28 35,40 26,33 17,40 21,28 11,20 23,20"
-        fill="none" stroke="rgba(220,160,20,0.85)" strokeWidth="1.2"/>
-      <text x="26" y="31" textAnchor="middle" fontSize="14" fontFamily="Georgia, serif"
-        fill="rgba(220,160,20,0.9)" fontWeight="bold">$</text>
-    </svg>
-  );
-}
-
-function GrainBg() {
-  const canvasRef = useRef(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    canvas.width = canvas.offsetWidth || 800;
-    canvas.height = canvas.offsetHeight || 200;
-    const w = canvas.width, h = canvas.height;
-    const imageData = ctx.createImageData(w, h);
-    for (let i = 0; i < imageData.data.length; i += 4) {
-      const v = Math.random() * 18;
-      imageData.data[i] = 180 + v;
-      imageData.data[i+1] = 120 + v * 0.5;
-      imageData.data[i+2] = 20 + v * 0.2;
-      imageData.data[i+3] = 6;
-    }
-    ctx.putImageData(imageData, 0, 0);
-  }, []);
-  return <canvas ref={canvasRef} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }} />;
-}
-
-const PRODUCTS = [
-  { name: "Bricker Blueprint Package", price: "$799", note: "The research process", hot: true },
-  { name: "HPA Innovation Fund — Series 1", price: "Call Dale", note: "Unregistered", hot: true },
-  { name: "Patriot Portfolio™", price: "$500 min", note: "God & Country", hot: false },
-  { name: "Terry's Gold Coin Program", price: "$499/qtr", note: "Physical Bitcoin", hot: false },
-  { name: "Elk City Land Trust", price: "TBD", note: "Pre-disruption pricing", hot: true },
-  { name: "Sovereign Crypto Strategy", price: "Ask Dale", note: "DOGE-led", hot: false },
-];
-
-const CREDENTIALS = [
-  "✓ Founder & Chief Investment Strategist",
-  "✓ OSU Finance, Class of 2008",
-  "✓ Certified Wealth Strategist™ (Tulsa Marriott)",
-  "✓ Author, 'Ride the Bull' ($39)",
-  "✓ 5 Disruptive Innovation Platforms",
-  "✓ Lead Analyst: Randy (18 months on Elk City)",
-  "✓ Deacon, First Baptist Edmond",
-];
-
-const TESTIMONIALS = [
-  { q: "Dale told me index funds were 'a comfortable path to mediocrity.' I've never felt more seen.", name: "Gary T., Yukon OK" },
-  { q: "Lost money but Dale said the thesis was intact. That was three years ago. Still intact.", name: "Debbie R., Edmond" },
-  { q: "Randy's Elk City research changed how I think about agricultural disruption.", name: "Mike S., Mustang OK" },
-];
-
-function SidebarContent() {
-  return (
-    <>
-      <div style={{ padding: "14px", borderBottom: "1px solid rgba(130,60,5,0.2)" }}>
-        <div style={{ fontSize: "9px", letterSpacing: "1.5px", color: "rgba(200,140,20,0.5)", marginBottom: "10px", textTransform: "uppercase" }}>
-          Dale's Hot Opportunities
-        </div>
-        {PRODUCTS.map((p, i) => (
-          <div key={i} style={{
-            padding: "9px 10px", borderRadius: "5px", marginBottom: "6px",
-            background: p.hot ? "rgba(120,50,5,0.35)" : "rgba(50,20,3,0.35)",
-            border: `1px solid ${p.hot ? "rgba(180,100,10,0.4)" : "rgba(100,45,5,0.2)"}`,
-          }}>
-            <div style={{ fontSize: "10px", color: "#d4b888", lineHeight: 1.3, marginBottom: "4px" }}>{p.name}</div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: "11px", fontWeight: "bold", color: "#c8860a" }}>{p.price}</span>
-              <span style={{ fontSize: "8px", color: "rgba(180,110,10,0.5)" }}>{p.note}</span>
+    <header style={{
+      background: COLORS.navy,
+      borderBottom: `3px solid ${COLORS.ochre}`,
+      position: "sticky", top: 0, zIndex: 50,
+    }}>
+      <div style={{
+        maxWidth: "1180px", margin: "0 auto",
+        padding: isMobile ? "12px 18px" : "16px 32px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
+        <div onClick={() => navClick("home")} style={{
+          display: "flex", alignItems: "center", gap: "12px", cursor: "pointer",
+        }}>
+          <HeartlandLogo size={isMobile ? 36 : 44} />
+          <div>
+            <div style={{
+              color: COLORS.cream, fontFamily: FONTS.serif,
+              fontSize: isMobile ? "16px" : "20px", fontWeight: 600,
+              letterSpacing: "0.3px", lineHeight: 1.1,
+            }}>
+              Heartland Prosperity Advisors
+            </div>
+            <div style={{
+              color: COLORS.ochreLight, fontSize: isMobile ? "9px" : "10px",
+              letterSpacing: "1.8px", textTransform: "uppercase", marginTop: "3px",
+              fontFamily: FONTS.sans, fontWeight: 500,
+            }}>
+              Edmond, Oklahoma · Est. 2014
             </div>
           </div>
-        ))}
+        </div>
+
+        {isMobile ? (
+          <button onClick={() => setMenuOpen(!menuOpen)} style={{
+            background: "transparent", border: `1px solid ${COLORS.ochreLight}`,
+            color: COLORS.cream, padding: "8px 12px", borderRadius: "3px",
+            fontSize: "16px", cursor: "pointer",
+          }}>☰</button>
+        ) : (
+          <nav style={{ display: "flex", gap: "28px" }}>
+            {links.map(l => (
+              <a key={l.id} onClick={() => navClick(l.id)} style={{
+                color: currentPage === l.id ? COLORS.ochreLight : COLORS.cream,
+                fontSize: "14px", fontFamily: FONTS.sans, fontWeight: 500,
+                textDecoration: "none", cursor: "pointer",
+                borderBottom: currentPage === l.id ? `2px solid ${COLORS.ochreLight}` : "2px solid transparent",
+                paddingBottom: "4px", letterSpacing: "0.3px",
+                transition: "color 0.15s",
+              }}>{l.label}</a>
+            ))}
+          </nav>
+        )}
       </div>
 
-      <div style={{ padding: "14px", borderBottom: "1px solid rgba(130,60,5,0.2)" }}>
-        <div style={{ fontSize: "9px", letterSpacing: "1.5px", color: "rgba(200,140,20,0.5)", marginBottom: "10px", textTransform: "uppercase" }}>
-          Dale's Credentials
+      {/* Mobile menu drawer */}
+      {isMobile && menuOpen && (
+        <div style={{
+          background: COLORS.navyDark, borderTop: `1px solid ${COLORS.ochre}`,
+          padding: "8px 0",
+        }}>
+          {links.map(l => (
+            <a key={l.id} onClick={() => navClick(l.id)} style={{
+              display: "block", padding: "14px 24px",
+              color: currentPage === l.id ? COLORS.ochreLight : COLORS.cream,
+              fontSize: "15px", fontFamily: FONTS.sans, cursor: "pointer",
+              borderBottom: `1px solid rgba(168,132,58,0.15)`,
+            }}>{l.label}</a>
+          ))}
         </div>
-        {CREDENTIALS.map((c, i) => (
-          <div key={i} style={{ fontSize: "9.5px", color: "rgba(180,130,60,0.65)", padding: "3px 0", borderBottom: "1px solid rgba(100,45,5,0.12)" }}>{c}</div>
-        ))}
-      </div>
-
-      <div style={{ padding: "14px" }}>
-        <div style={{ fontSize: "9px", letterSpacing: "1.5px", color: "rgba(200,140,20,0.5)", marginBottom: "10px", textTransform: "uppercase" }}>
-          What Folks Are Saying
-        </div>
-        {TESTIMONIALS.map((t, i) => (
-          <div key={i} style={{ padding: "8px", borderLeft: "2px solid rgba(160,90,10,0.4)", marginBottom: "8px", background: "rgba(40,15,2,0.3)" }}>
-            <div style={{ fontSize: "10px", color: "rgba(200,160,90,0.7)", lineHeight: 1.5, fontStyle: "italic" }}>"{t.q}"</div>
-            <div style={{ fontSize: "8px", color: "rgba(160,100,20,0.45)", marginTop: "4px" }}>— {t.name}</div>
-          </div>
-        ))}
-      </div>
-    </>
+      )}
+    </header>
   );
 }
 
-export default function HeartlandProsperity() {
+// ============================================================
+// HOME PAGE
+// ============================================================
+function HomePage({ setPage, isMobile }) {
+  return (
+    <div>
+      {/* HERO */}
+      <section style={{
+        position: "relative",
+        background: `linear-gradient(180deg, ${COLORS.creamLight} 0%, ${COLORS.cream} 100%)`,
+        padding: isMobile ? "48px 20px 56px" : "88px 32px 96px",
+        borderBottom: `1px solid ${COLORS.border}`,
+        overflow: "hidden",
+      }}>
+        <FlagBackdrop />
+        <div style={{
+          maxWidth: "1180px", margin: "0 auto", position: "relative", zIndex: 2,
+          display: "grid",
+          gridTemplateColumns: isMobile ? "1fr" : "1.3fr 1fr",
+          gap: isMobile ? "32px" : "64px", alignItems: "center",
+        }}>
+          <div>
+            <div style={{
+              color: COLORS.ochre, fontSize: "12px", letterSpacing: "2.5px",
+              textTransform: "uppercase", fontFamily: FONTS.sans,
+              fontWeight: 600, marginBottom: "20px",
+            }}>
+              Independent · Fiduciary · Family-Owned
+            </div>
+            <h1 style={{
+              fontFamily: FONTS.display,
+              fontSize: isMobile ? "32px" : "46px",
+              color: COLORS.navy, lineHeight: 1.15, fontWeight: 400,
+              margin: "0 0 22px", letterSpacing: "-0.5px",
+            }}>
+              Independent fiduciary planning for Central Oklahoma families.
+            </h1>
+            <p style={{
+              fontFamily: FONTS.serif, fontSize: isMobile ? "16px" : "18px",
+              color: COLORS.textMuted, lineHeight: 1.6, marginBottom: "32px",
+              maxWidth: "560px",
+            }}>
+              Serving Edmond and the OKC metro since 2014. Comprehensive financial planning,
+              retirement income strategy, and disruptive innovation research for working
+              Oklahomans and the families who built this state.
+            </p>
+            <div style={{ display: "flex", gap: "14px", flexWrap: "wrap" }}>
+              <button onClick={() => setPage("contact")} style={{
+                background: COLORS.navy, color: COLORS.cream,
+                border: "none", padding: "14px 28px",
+                fontFamily: FONTS.sans, fontSize: "14px", fontWeight: 600,
+                letterSpacing: "0.8px", textTransform: "uppercase",
+                cursor: "pointer", borderRadius: "2px",
+              }}>Schedule a Discovery Call</button>
+              <button onClick={() => setPage("research")} style={{
+                background: "transparent", color: COLORS.navy,
+                border: `1.5px solid ${COLORS.navy}`, padding: "13px 26px",
+                fontFamily: FONTS.sans, fontSize: "14px", fontWeight: 600,
+                letterSpacing: "0.8px", textTransform: "uppercase",
+                cursor: "pointer", borderRadius: "2px",
+              }}>Read Our Research</button>
+            </div>
+          </div>
+
+          {/* Dale photo card */}
+          <div style={{
+            background: COLORS.creamLight,
+            border: `1px solid ${COLORS.border}`,
+            padding: "8px",
+            boxShadow: "0 12px 40px rgba(26,41,66,0.12)",
+            maxWidth: isMobile ? "320px" : "100%",
+            margin: isMobile ? "0 auto" : "0",
+          }}>
+            <img src="/dale-headshot.jpg" alt="Dale Bricker, Founder"
+              style={{ width: "100%", height: "auto", display: "block" }} />
+            <div style={{
+              padding: "14px 4px 6px", textAlign: "center",
+              fontFamily: FONTS.serif,
+            }}>
+              <div style={{ color: COLORS.navy, fontSize: "15px", fontWeight: 600 }}>
+                Dale Bricker
+              </div>
+              <div style={{ color: COLORS.textMuted, fontSize: "12px",
+                fontStyle: "italic", marginTop: "3px" }}>
+                Founder &amp; Chief Investment Strategist
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TRUST STRIP */}
+      <section style={{
+        background: COLORS.creamLight,
+        borderBottom: `1px solid ${COLORS.border}`,
+        padding: isMobile ? "20px 18px" : "24px 32px",
+      }}>
+        <div style={{
+          maxWidth: "1180px", margin: "0 auto",
+          display: "flex", justifyContent: "space-around", flexWrap: "wrap",
+          gap: isMobile ? "14px" : "24px",
+        }}>
+          {[
+            "Fee-Based Advisory",
+            "Fiduciary Standard",
+            "Faith &amp; Family-Owned",
+            "Member, Edmond Chamber of Commerce",
+          ].map((badge, i) => (
+            <div key={i} style={{
+              fontFamily: FONTS.sans, fontSize: isMobile ? "11px" : "12px",
+              color: COLORS.textMuted, letterSpacing: "1.2px",
+              textTransform: "uppercase", fontWeight: 500,
+              textAlign: "center",
+            }} dangerouslySetInnerHTML={{__html: badge}}/>
+          ))}
+        </div>
+      </section>
+
+      {/* OUR APPROACH */}
+      <section style={{
+        background: COLORS.cream, padding: isMobile ? "56px 20px" : "88px 32px",
+      }}>
+        <div style={{ maxWidth: "1180px", margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: isMobile ? "40px" : "56px" }}>
+            <div style={{
+              color: COLORS.ochre, fontSize: "11px", letterSpacing: "2.5px",
+              textTransform: "uppercase", fontFamily: FONTS.sans,
+              fontWeight: 600, marginBottom: "14px",
+            }}>Our Approach</div>
+            <h2 style={{
+              fontFamily: FONTS.display, fontSize: isMobile ? "26px" : "34px",
+              color: COLORS.navy, fontWeight: 400, margin: 0,
+              letterSpacing: "-0.3px",
+            }}>Three pillars. Built for the long road.</h2>
+          </div>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr",
+            gap: isMobile ? "28px" : "40px",
+          }}>
+            {[
+              {
+                title: "Comprehensive Planning",
+                body: "Retirement projections, estate coordination, tax-aware withdrawal strategy, and education funding. Built around your full financial picture, not a single account.",
+              },
+              {
+                title: "Retirement Income Strategy",
+                body: "Sequence-of-returns risk is the single largest threat to a retiring household. We design guaranteed income layers underneath growth allocations so the market noise stops mattering.",
+              },
+              {
+                title: "Innovation Research",
+                body: "We believe the next decade will reward investors who identify disruptive platforms before consensus does. Our research focuses on five convergence themes rooted in the American heartland.",
+              },
+            ].map((pillar, i) => (
+              <div key={i} style={{
+                borderTop: `2px solid ${COLORS.ochre}`,
+                paddingTop: "22px",
+              }}>
+                <h3 style={{
+                  fontFamily: FONTS.display, fontSize: "20px",
+                  color: COLORS.navy, fontWeight: 600, margin: "0 0 14px",
+                }}>{pillar.title}</h3>
+                <p style={{
+                  fontFamily: FONTS.serif, fontSize: "15px",
+                  color: COLORS.text, lineHeight: 1.7, margin: 0,
+                }}>{pillar.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FOUNDER SECTION */}
+      <section style={{
+        background: COLORS.navy, color: COLORS.cream,
+        padding: isMobile ? "56px 20px" : "88px 32px",
+        position: "relative", overflow: "hidden",
+      }}>
+        <div style={{ maxWidth: "980px", margin: "0 auto", position: "relative", zIndex: 2 }}>
+          <div style={{ textAlign: "center", marginBottom: "32px" }}>
+            <div style={{
+              color: COLORS.ochreLight, fontSize: "11px", letterSpacing: "2.5px",
+              textTransform: "uppercase", fontFamily: FONTS.sans,
+              fontWeight: 600, marginBottom: "14px",
+            }}>From the Founder</div>
+            <h2 style={{
+              fontFamily: FONTS.display, fontSize: isMobile ? "26px" : "32px",
+              color: COLORS.cream, fontWeight: 400, margin: 0,
+              fontStyle: "italic",
+            }}>"I started Heartland Prosperity at a folding table.<br/>Eleven years later, that table is still in my office."</h2>
+          </div>
+
+          <p style={{
+            fontFamily: FONTS.serif, fontSize: isMobile ? "15px" : "17px",
+            lineHeight: 1.8, color: "rgba(245,241,232,0.88)",
+            maxWidth: "720px", margin: "0 auto 28px",
+          }}>
+            Dale Bricker founded Heartland Prosperity Advisors in 2014 after fifteen years
+            in retail finance, motivated by what he saw families lose in the 2008 financial
+            crisis. A 2008 graduate of Oklahoma State University's Spears School of Business,
+            Dale lives in Edmond with his wife and serves as a deacon at First Baptist Edmond.
+          </p>
+          <div style={{ textAlign: "center" }}>
+            <button onClick={() => setPage("about")} style={{
+              background: "transparent", color: COLORS.ochreLight,
+              border: `1.5px solid ${COLORS.ochreLight}`, padding: "12px 26px",
+              fontFamily: FONTS.sans, fontSize: "13px", fontWeight: 600,
+              letterSpacing: "0.8px", textTransform: "uppercase",
+              cursor: "pointer", borderRadius: "2px",
+            }}>Read More About Dale</button>
+          </div>
+        </div>
+      </section>
+
+      {/* RESEARCH HIGHLIGHTS — the Ark contamination starts here */}
+      <section style={{
+        background: COLORS.creamLight, padding: isMobile ? "56px 20px" : "88px 32px",
+      }}>
+        <div style={{ maxWidth: "1180px", margin: "0 auto" }}>
+          <div style={{
+            display: "flex", justifyContent: "space-between", alignItems: "baseline",
+            marginBottom: "36px", flexWrap: "wrap", gap: "12px",
+          }}>
+            <div>
+              <div style={{
+                color: COLORS.ochre, fontSize: "11px", letterSpacing: "2.5px",
+                textTransform: "uppercase", fontFamily: FONTS.sans,
+                fontWeight: 600, marginBottom: "10px",
+              }}>Recent Research</div>
+              <h2 style={{
+                fontFamily: FONTS.display, fontSize: isMobile ? "26px" : "32px",
+                color: COLORS.navy, fontWeight: 400, margin: 0,
+              }}>Notes from the Innovation Desk</h2>
+            </div>
+            <a onClick={() => setPage("research")} style={{
+              color: COLORS.navy, fontFamily: FONTS.sans, fontSize: "13px",
+              fontWeight: 600, cursor: "pointer", letterSpacing: "0.5px",
+              borderBottom: `1px solid ${COLORS.navy}`, paddingBottom: "2px",
+            }}>View All Research →</a>
+          </div>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr",
+            gap: isMobile ? "20px" : "24px",
+          }}>
+            {[
+              { tag: "OIL & GAS", date: "Q1 2026", title: "The Bridge Decade: Why Hydrocarbon Convergence Outlasts Consensus", chart: "oil" },
+              { tag: "AGRICULTURE", date: "Q4 2025", title: "Agricultural Land as an Emerging Innovation Asset Class", chart: "ag" },
+              { tag: "DIGITAL ASSETS", date: "Q2 2026", title: "Sovereign Digital Assets: A Framework for Allocation", chart: "crypto" },
+            ].map((note, i) => (
+              <div key={i} onClick={() => setPage("research")} style={{
+                background: COLORS.cream, border: `1px solid ${COLORS.border}`,
+                cursor: "pointer", transition: "all 0.2s",
+              }}>
+                {/* Chart placeholder */}
+                <div style={{
+                  height: "140px",
+                  background: COLORS.navy,
+                  position: "relative", overflow: "hidden",
+                }}>
+                  <MiniChart variant={note.chart} />
+                </div>
+                <div style={{ padding: "18px 20px 22px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between",
+                    fontSize: "10px", letterSpacing: "1.5px", marginBottom: "12px",
+                    color: COLORS.ochre, fontFamily: FONTS.sans, fontWeight: 600,
+                  }}>
+                    <span>{note.tag}</span>
+                    <span style={{ color: COLORS.textMuted }}>{note.date}</span>
+                  </div>
+                  <h3 style={{
+                    fontFamily: FONTS.display, fontSize: "16px",
+                    color: COLORS.navy, fontWeight: 600, margin: "0 0 12px",
+                    lineHeight: 1.35,
+                  }}>{note.title}</h3>
+                  <div style={{
+                    fontFamily: FONTS.sans, fontSize: "11px",
+                    color: COLORS.textMuted, letterSpacing: "0.3px",
+                  }}>
+                    Dale Bricker &amp; Randy Holloway · 8 min read
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section style={{
+        background: COLORS.cream, padding: isMobile ? "56px 20px" : "80px 32px",
+      }}>
+        <div style={{ maxWidth: "1080px", margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: "44px" }}>
+            <div style={{
+              color: COLORS.ochre, fontSize: "11px", letterSpacing: "2.5px",
+              textTransform: "uppercase", fontFamily: FONTS.sans,
+              fontWeight: 600, marginBottom: "12px",
+            }}>What Our Clients Say</div>
+            <h2 style={{
+              fontFamily: FONTS.display, fontSize: isMobile ? "24px" : "30px",
+              color: COLORS.navy, fontWeight: 400, margin: 0,
+            }}>Built on relationships, not transactions.</h2>
+          </div>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr",
+            gap: isMobile ? "24px" : "32px",
+          }}>
+            {[
+              { q: "Dale and his team helped us think through retirement income in a way our previous advisor never did. We feel like we have a real plan now.", name: "Mike S.", city: "Mustang, OK" },
+              { q: "We appreciate that Dale takes the time to explain his research, even when it goes against conventional wisdom. He never makes us feel small for asking questions.", name: "Debbie R.", city: "Edmond, OK" },
+              { q: "When my husband passed, Dale showed up at the house before I even called the firm. That's the kind of advisor he is.", name: "Gary T.'s widow", city: "Yukon, OK" },
+            ].map((t, i) => (
+              <div key={i} style={{
+                padding: "0 4px",
+              }}>
+                <div style={{
+                  fontSize: "30px", color: COLORS.ochre,
+                  fontFamily: FONTS.display, lineHeight: 1, marginBottom: "8px",
+                }}>"</div>
+                <p style={{
+                  fontFamily: FONTS.serif, fontSize: "15px",
+                  color: COLORS.text, lineHeight: 1.7, margin: "0 0 16px",
+                  fontStyle: "italic",
+                }}>{t.q}</p>
+                <div style={{
+                  fontFamily: FONTS.sans, fontSize: "12px",
+                  color: COLORS.textMuted, letterSpacing: "0.5px",
+                }}>
+                  — {t.name}, {t.city}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA BAND */}
+      <section style={{
+        background: `linear-gradient(180deg, ${COLORS.navy} 0%, ${COLORS.navyDark} 100%)`,
+        padding: isMobile ? "48px 20px" : "64px 32px",
+        textAlign: "center",
+      }}>
+        <h2 style={{
+          fontFamily: FONTS.display, fontSize: isMobile ? "24px" : "30px",
+          color: COLORS.cream, fontWeight: 400, margin: "0 0 14px",
+        }}>Ready to talk?</h2>
+        <p style={{
+          fontFamily: FONTS.serif, fontSize: "16px",
+          color: "rgba(245,241,232,0.78)", margin: "0 0 28px",
+        }}>Schedule a no-obligation discovery call. We sit with you, not at you.</p>
+        <button onClick={() => setPage("contact")} style={{
+          background: COLORS.ochre, color: COLORS.navy,
+          border: "none", padding: "14px 32px",
+          fontFamily: FONTS.sans, fontSize: "13px", fontWeight: 700,
+          letterSpacing: "1px", textTransform: "uppercase",
+          cursor: "pointer", borderRadius: "2px",
+        }}>Schedule a Discovery Call</button>
+      </section>
+    </div>
+  );
+}
+
+// Mini-charts that look like Ark research note thumbnails
+function MiniChart({ variant }) {
+  if (variant === "oil") {
+    return (
+      <svg width="100%" height="100%" viewBox="0 0 300 140" preserveAspectRatio="none">
+        <path d="M 10 110 L 50 95 L 90 100 L 130 75 L 170 80 L 210 50 L 250 55 L 290 25"
+          stroke={COLORS.ochreLight} strokeWidth="2" fill="none"/>
+        <path d="M 10 110 L 50 95 L 90 100 L 130 75 L 170 80 L 210 50 L 250 55 L 290 25 L 290 140 L 10 140 Z"
+          fill={COLORS.ochreLight} opacity="0.15"/>
+        {[10,50,90,130,170,210,250,290].map((x,i) => {
+          const ys = [110,95,100,75,80,50,55,25];
+          return <circle key={i} cx={x} cy={ys[i]} r="2.5" fill={COLORS.ochreLight}/>;
+        })}
+      </svg>
+    );
+  }
+  if (variant === "ag") {
+    return (
+      <svg width="100%" height="100%" viewBox="0 0 300 140" preserveAspectRatio="none">
+        {[20, 60, 100, 140, 180, 220, 260].map((x, i) => {
+          const h = 30 + i * 12;
+          return <rect key={i} x={x} y={140-h} width="22" height={h} fill={COLORS.ochreLight} opacity={0.5 + i*0.07}/>;
+        })}
+      </svg>
+    );
+  }
+  if (variant === "crypto") {
+    return (
+      <svg width="100%" height="100%" viewBox="0 0 300 140" preserveAspectRatio="none">
+        <path d="M 10 100 L 40 90 L 70 105 L 100 70 L 130 85 L 160 40 L 190 60 L 220 30 L 250 45 L 290 15"
+          stroke={COLORS.ochreLight} strokeWidth="2" fill="none"/>
+        <path d="M 10 100 L 40 90 L 70 105 L 100 70 L 130 85 L 160 40 L 190 60 L 220 30 L 250 45 L 290 15 L 290 140 L 10 140 Z"
+          fill={COLORS.ochreLight} opacity="0.15"/>
+      </svg>
+    );
+  }
+  return null;
+}
+
+// ============================================================
+// ABOUT PAGE
+// ============================================================
+function AboutPage({ isMobile }) {
+  return (
+    <div style={{ background: COLORS.cream, paddingBottom: "64px" }}>
+      <PageHeader title="About Heartland Prosperity" subtitle="Eleven years serving Central Oklahoma families." isMobile={isMobile} />
+
+      <div style={{
+        maxWidth: "780px", margin: "0 auto",
+        padding: isMobile ? "48px 20px" : "72px 32px",
+        fontFamily: FONTS.serif, fontSize: isMobile ? "16px" : "17px",
+        lineHeight: 1.8, color: COLORS.text,
+      }}>
+        <h2 style={{
+          fontFamily: FONTS.display, fontSize: "26px",
+          color: COLORS.navy, fontWeight: 600, margin: "0 0 20px",
+        }}>The Founder</h2>
+
+        <p>Dale Bricker grew up in Stillwater, Oklahoma, the son of a high school football coach
+        and a school nurse. He graduated from Oklahoma State University's Spears School of
+        Business in 2008, weeks before Lehman Brothers collapsed and the world he had been
+        preparing to enter rearranged itself overnight.</p>
+
+        <p>He spent the next six years in retail finance — first at a regional bank in Tulsa,
+        then with a national broker-dealer's Oklahoma City office — watching the families
+        he grew up around lose retirement savings they would never recover. By 2014 he had
+        seen enough. He set up a folding table in a Chick-fil-A parking lot off the Kilpatrick
+        Turnpike, hung an HPA magnetic sign on the door of his Ram 1500, and started taking
+        appointments.</p>
+
+        <p>Eleven years later, Heartland Prosperity Advisors operates out of an office two
+        miles from that parking lot. The folding table is still in the conference room.
+        Dale calls it "the first asset." He is not joking, and his clients know he is not
+        joking, and they like that he is not joking.</p>
+
+        <h2 style={{
+          fontFamily: FONTS.display, fontSize: "22px",
+          color: COLORS.navy, fontWeight: 600, margin: "40px 0 18px",
+        }}>Our Philosophy</h2>
+
+        <p>We believe in three things. We believe that the families who built this country
+        deserve advice that takes them seriously — not a glossy brochure and a 1-800 number.
+        We believe that real research happens at kitchen tables and gas stations, not just
+        on Bloomberg terminals. And we believe that the next decade of investing will reward
+        the people who looked at the American heartland and saw it for what it is: an
+        engine that has not yet been priced correctly.</p>
+
+        <h2 style={{
+          fontFamily: FONTS.display, fontSize: "22px",
+          color: COLORS.navy, fontWeight: 600, margin: "40px 0 18px",
+        }}>The Team</h2>
+
+        <p><strong style={{color: COLORS.navy}}>Dale Bricker</strong> — Founder &amp; Chief
+        Investment Strategist. OSU '08. Certified Wealth Strategist (2018). Deacon, First
+        Baptist Edmond. Lives in Edmond with his wife Susan.</p>
+
+        <p><strong style={{color: COLORS.navy}}>Randy Holloway</strong> — Lead Analyst.
+        Eighteen months on the Elk City agricultural land thesis and counting. Randy was
+        a procurement manager at a feedlot before joining HPA. He prefers Cracker Barrel
+        for client breakfasts. He is the kind of analyst who shows up.</p>
+
+        <p><strong style={{color: COLORS.navy}}>Terry Bricker</strong> — Precious Metals
+        Specialist. Terry oversees the firm's gold coin acquisition program from his
+        warehouse in Mustang. Terry is Dale's brother-in-law. He has been in the coin
+        business for over a decade.</p>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// SERVICES PAGE
+// ============================================================
+function ServicesPage({ setPage, isMobile }) {
+  const services = [
+    {
+      name: "Comprehensive Financial Planning",
+      price: "Fee-based, starting at $2,400 annually",
+      desc: "A full review of your retirement, estate, tax, and education funding picture. Updated annually. Built around your household, not your account balance.",
+    },
+    {
+      name: "Retirement Income Strategy",
+      price: "Included with planning engagement",
+      desc: "Sequence-of-returns risk modeling, guaranteed income layer design, Social Security claiming optimization, and Roth conversion analysis for households within ten years of retirement.",
+    },
+    {
+      name: "The Bricker Blueprint",
+      price: "$799 · spiral-bound",
+      desc: "A 60-page personalized planning document Dale developed over eleven years of client work. Covers cash flow, debt strategy, savings targets, and a phased investment allocation. Available at the front desk.",
+    },
+    {
+      name: "HPA Innovation Research Access",
+      price: "Quarterly publication",
+      desc: "Our research notes on the five Heartland Innovation Platforms: Oil &amp; Gas Convergence, Precious Metals, Agricultural Disruption, Quick-Service Restaurant Technology, and Sovereign Digital Assets.",
+    },
+    {
+      name: "Specialty Platform Allocations",
+      price: "Available to qualified clients",
+      desc: "Direct allocations to our specialty platforms, including the Elk City Land Trust and Terry's Precious Metals Program. Minimums and suitability requirements apply.",
+    },
+  ];
+
+  return (
+    <div style={{ background: COLORS.cream, paddingBottom: "64px" }}>
+      <PageHeader title="Services" subtitle="Planning, research, and platform access." isMobile={isMobile} />
+
+      <div style={{ maxWidth: "880px", margin: "0 auto",
+        padding: isMobile ? "48px 20px" : "72px 32px" }}>
+        {services.map((s, i) => (
+          <div key={i} style={{
+            borderBottom: i < services.length - 1 ? `1px solid ${COLORS.border}` : "none",
+            padding: "28px 0",
+          }}>
+            <div style={{
+              display: "flex", justifyContent: "space-between",
+              alignItems: "baseline", flexWrap: "wrap", gap: "8px",
+              marginBottom: "12px",
+            }}>
+              <h3 style={{
+                fontFamily: FONTS.display, fontSize: "20px",
+                color: COLORS.navy, fontWeight: 600, margin: 0,
+              }}>{s.name}</h3>
+              <div style={{
+                fontFamily: FONTS.sans, fontSize: "12px",
+                color: COLORS.ochre, letterSpacing: "0.5px",
+                fontWeight: 600,
+              }}>{s.price}</div>
+            </div>
+            <p style={{
+              fontFamily: FONTS.serif, fontSize: "16px",
+              color: COLORS.text, lineHeight: 1.7, margin: 0,
+            }} dangerouslySetInnerHTML={{__html: s.desc}}/>
+          </div>
+        ))}
+
+        <div style={{ marginTop: "48px", textAlign: "center" }}>
+          <button onClick={() => setPage("contact")} style={{
+            background: COLORS.navy, color: COLORS.cream,
+            border: "none", padding: "14px 32px",
+            fontFamily: FONTS.sans, fontSize: "13px", fontWeight: 600,
+            letterSpacing: "1px", textTransform: "uppercase",
+            cursor: "pointer", borderRadius: "2px",
+          }}>Schedule a Discovery Call</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// RESEARCH PAGE — Ark contamination + chatbot lives here
+// ============================================================
+function ResearchPage({ isMobile }) {
+  const [chatOpen, setChatOpen] = useState(false);
+  const notes = [
+    { tag: "OIL & GAS CONVERGENCE", date: "Q1 2026", title: "The Bridge Decade: Why Hydrocarbon Convergence Outlasts Consensus", excerpt: "Consensus continues to underweight conventional energy on the assumption of a smooth transition. Our work suggests a longer bridge period in which integrated hydrocarbon platforms — particularly those with midstream optionality in the SCOOP/STACK basin — outperform on both cash yield and terminal value.", chart: "oil" },
+    { tag: "AGRICULTURAL DISRUPTION", date: "Q4 2025", title: "Agricultural Land as an Emerging Innovation Asset Class", excerpt: "Western Oklahoma agricultural land has historically been priced as a commodity-linked income asset. We believe this is increasingly the wrong frame. As precision agriculture and on-site processing technologies scale, productive parcels in counties like Beckham, Roger Mills, and Washita carry latent platform value that has not yet been incorporated into market pricing.", chart: "ag" },
+    { tag: "SOVEREIGN DIGITAL ASSETS", date: "Q2 2026", title: "Sovereign Digital Assets: A Framework for Allocation", excerpt: "We propose a tiered framework for digital asset exposure in household portfolios, distinguishing between (i) reserve-status assets, (ii) sovereign-aligned assets, and (iii) speculative tokens. Allocations in tier (ii) — particularly assets with executive-branch alignment — may warrant tactical overweighting through 2028.", chart: "crypto" },
+    { tag: "QSR TECHNOLOGY", date: "Q3 2025", title: "The Chick-fil-A Cost Curve: A Wright's Law Case Study", excerpt: "We apply Wright's Law to the operational data of a leading quick-service franchise system. Per-transaction cost has declined at a remarkably consistent compound rate over the last decade, suggesting a learning curve more typical of advanced manufacturing than food service. We believe this has implications for ecosystem-adjacent investments.", chart: "ag" },
+    { tag: "PRECIOUS METALS", date: "Q2 2025", title: "Digitization of Physical Gold: A Bridge Asset Framework", excerpt: "The digitization of physical precious metals — through tokenization, fractionalization, and chain-of-custody attestation — represents an early-stage convergence between traditional store-of-value assets and the emerging sovereign digital asset complex.", chart: "crypto" },
+  ];
+
+  return (
+    <div style={{ background: COLORS.creamLight, paddingBottom: "80px" }}>
+      <PageHeader title="Research" subtitle="Notes from the Innovation Desk." isMobile={isMobile} />
+
+      {/* Innovation platforms strip */}
+      <div style={{
+        background: COLORS.navy, color: COLORS.cream,
+        padding: isMobile ? "32px 20px" : "44px 32px",
+      }}>
+        <div style={{ maxWidth: "1180px", margin: "0 auto" }}>
+          <div style={{
+            color: COLORS.ochreLight, fontSize: "10px", letterSpacing: "2.5px",
+            textTransform: "uppercase", fontFamily: FONTS.sans,
+            fontWeight: 600, marginBottom: "16px",
+          }}>The Five Heartland Innovation Platforms</div>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(5, 1fr)",
+            gap: isMobile ? "12px" : "20px",
+          }}>
+            {[
+              "Oil &amp; Gas Convergence",
+              "Precious Metals Digitization",
+              "Agricultural Disruption",
+              "QSR Technology",
+              "Sovereign Digital Assets",
+            ].map((p, i) => (
+              <div key={i} style={{
+                borderTop: `2px solid ${COLORS.ochre}`,
+                paddingTop: "10px",
+                fontFamily: FONTS.serif, fontSize: "14px",
+                color: COLORS.cream, fontWeight: 500,
+              }} dangerouslySetInnerHTML={{__html: `0${i+1} · ${p}`}}/>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: "1180px", margin: "0 auto",
+        padding: isMobile ? "48px 20px" : "64px 32px" }}>
+
+        {/* Ask Dale CTA */}
+        <div style={{
+          background: COLORS.cream, border: `1px solid ${COLORS.border}`,
+          padding: isMobile ? "20px" : "28px 32px",
+          marginBottom: "40px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          flexWrap: "wrap", gap: "16px",
+        }}>
+          <div style={{ flex: "1 1 300px" }}>
+            <div style={{
+              fontFamily: FONTS.display, fontSize: "18px",
+              color: COLORS.navy, fontWeight: 600, marginBottom: "6px",
+            }}>Have a question about our research?</div>
+            <div style={{
+              fontFamily: FONTS.serif, fontSize: "14px",
+              color: COLORS.textMuted,
+            }}>Ask Dale directly. He responds during business hours.</div>
+          </div>
+          <button onClick={() => setChatOpen(true)} style={{
+            background: COLORS.ochre, color: COLORS.navy,
+            border: "none", padding: "12px 24px",
+            fontFamily: FONTS.sans, fontSize: "13px", fontWeight: 700,
+            letterSpacing: "0.8px", textTransform: "uppercase",
+            cursor: "pointer", borderRadius: "2px",
+          }}>Ask Dale</button>
+        </div>
+
+        {/* Research notes */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+          gap: isMobile ? "24px" : "32px",
+        }}>
+          {notes.map((n, i) => (
+            <article key={i} style={{
+              background: COLORS.cream, border: `1px solid ${COLORS.border}`,
+            }}>
+              <div style={{
+                height: "180px", background: COLORS.navy,
+                position: "relative", overflow: "hidden",
+              }}>
+                <MiniChart variant={n.chart}/>
+              </div>
+              <div style={{ padding: "24px 28px 28px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between",
+                  fontSize: "10px", letterSpacing: "1.5px", marginBottom: "14px",
+                  color: COLORS.ochre, fontFamily: FONTS.sans, fontWeight: 600,
+                }}>
+                  <span>{n.tag}</span>
+                  <span style={{ color: COLORS.textMuted }}>{n.date}</span>
+                </div>
+                <h3 style={{
+                  fontFamily: FONTS.display, fontSize: "20px",
+                  color: COLORS.navy, fontWeight: 600, margin: "0 0 14px",
+                  lineHeight: 1.3,
+                }}>{n.title}</h3>
+                <p style={{
+                  fontFamily: FONTS.serif, fontSize: "14px",
+                  color: COLORS.text, lineHeight: 1.7, margin: "0 0 16px",
+                }}>{n.excerpt}</p>
+                <div style={{
+                  fontFamily: FONTS.sans, fontSize: "11px",
+                  color: COLORS.textMuted, letterSpacing: "0.3px",
+                }}>
+                  Dale Bricker &amp; Randy Holloway · Research
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      {chatOpen && <ChatModal onClose={() => setChatOpen(false)} isMobile={isMobile}/>}
+    </div>
+  );
+}
+
+// ============================================================
+// CHAT MODAL — preserves the existing Dale chatbot
+// ============================================================
+function ChatModal({ onClose, isMobile }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [blink, setBlink] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const tickerRef = useRef(null);
   const messagesEndRef = useRef(null);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  useEffect(() => {
-    const t = tickerRef.current;
-    if (!t) return;
-    let pos = 0;
-    const iv = setInterval(() => {
-      pos += 0.65;
-      if (pos > t.scrollWidth / 2) pos = 0;
-      t.style.transform = `translateX(-${pos}px)`;
-    }, 16);
-    return () => clearInterval(iv);
-  }, []);
-
-  useEffect(() => {
-    const iv = setInterval(() => setBlink(b => !b), 700);
-    return () => clearInterval(iv);
-  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -257,443 +954,514 @@ export default function HeartlandProsperity() {
       });
       const data = await res.json();
       const reply = data.content?.find(b => b.type === "text")?.text
-        || "Shoot, my internet's acting up again — I told Terry he should've gone with Cox instead of AT&T. Try me again in one second, partner!";
+        || "Shoot, my internet's acting up — try me again in one second, partner.";
       setMessages(prev => [...prev, { role: "assistant", content: reply }]);
     } catch {
-      setMessages(prev => [...prev, { role: "assistant", content: "Hang tight partner — the server's slower than a state fair line for fried butter. Back in a jiffy." }]);
+      setMessages(prev => [...prev, { role: "assistant", content: "Hang tight partner — back in a jiffy." }]);
     } finally {
       setLoading(false);
     }
   };
 
-  const tickerFull = [...TICKER, ...TICKER].join("   ★   ");
+  return (
+    <div style={{
+      position: "fixed", inset: 0, background: "rgba(15,27,46,0.75)",
+      zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center",
+      padding: isMobile ? "0" : "32px",
+    }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        background: COLORS.cream, width: "100%", maxWidth: "720px",
+        height: isMobile ? "100%" : "85vh", maxHeight: isMobile ? "100%" : "720px",
+        display: "flex", flexDirection: "column",
+        borderRadius: isMobile ? 0 : "4px",
+        boxShadow: "0 24px 80px rgba(0,0,0,0.4)",
+      }}>
+        {/* Header */}
+        <div style={{
+          background: COLORS.navy, padding: "16px 22px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          borderBottom: `2px solid ${COLORS.ochre}`,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <img src="/dale-headshot.jpg" alt="Dale"
+              style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover", objectPosition: "center 25%" }}/>
+            <div>
+              <div style={{ color: COLORS.cream, fontFamily: FONTS.serif,
+                fontSize: "15px", fontWeight: 600 }}>Dale Bricker</div>
+              <div style={{ color: COLORS.ochreLight, fontSize: "10px",
+                letterSpacing: "1.2px", textTransform: "uppercase",
+                fontFamily: FONTS.sans, marginTop: "2px" }}>Founder · Online</div>
+            </div>
+          </div>
+          <button onClick={onClose} style={{
+            background: "transparent", border: "none", color: COLORS.cream,
+            fontSize: "24px", cursor: "pointer", padding: "4px 12px",
+            fontFamily: FONTS.serif,
+          }}>×</button>
+        </div>
+
+        {/* Messages */}
+        <div style={{
+          flex: 1, overflowY: "auto", padding: "20px 22px",
+          background: COLORS.creamLight,
+        }}>
+          {messages.length === 0 && (
+            <div style={{ padding: "8px 0" }}>
+              <p style={{
+                fontFamily: FONTS.serif, fontSize: "15px",
+                color: COLORS.text, lineHeight: 1.6, marginBottom: "20px",
+              }}>
+                Hey there, partner. Dale here. Happy to talk through anything in our
+                research — Elk City, the innovation platforms, retirement strategy,
+                anything on your mind. What can I help you think through today?
+              </p>
+              <div style={{
+                fontSize: "10px", letterSpacing: "1.5px", textTransform: "uppercase",
+                color: COLORS.ochre, fontFamily: FONTS.sans, fontWeight: 600,
+                marginBottom: "10px",
+              }}>Suggested Questions</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                {STARTERS.map((s, i) => (
+                  <button key={i} onClick={() => send(s)} style={{
+                    background: COLORS.cream, border: `1px solid ${COLORS.border}`,
+                    color: COLORS.text, padding: "11px 14px",
+                    fontFamily: FONTS.serif, fontSize: "14px",
+                    textAlign: "left", cursor: "pointer", borderRadius: "2px",
+                  }}>{s}</button>
+                ))}
+              </div>
+            </div>
+          )}
+          {messages.map((m, i) => (
+            <div key={i} style={{
+              display: "flex", marginBottom: "16px",
+              justifyContent: m.role === "user" ? "flex-end" : "flex-start",
+            }}>
+              <div style={{
+                maxWidth: "85%",
+                background: m.role === "user" ? COLORS.navy : COLORS.cream,
+                color: m.role === "user" ? COLORS.cream : COLORS.text,
+                border: m.role === "user" ? "none" : `1px solid ${COLORS.border}`,
+                padding: "12px 16px", borderRadius: "4px",
+                fontFamily: FONTS.serif, fontSize: "14.5px", lineHeight: 1.65,
+                whiteSpace: "pre-wrap",
+              }}>{m.content}</div>
+            </div>
+          ))}
+          {loading && (
+            <div style={{ display: "flex" }}>
+              <div style={{
+                background: COLORS.cream, border: `1px solid ${COLORS.border}`,
+                padding: "12px 16px", borderRadius: "4px",
+                color: COLORS.textMuted, fontFamily: FONTS.serif,
+                fontSize: "14px", fontStyle: "italic",
+              }}>Dale is typing…</div>
+            </div>
+          )}
+          <div ref={messagesEndRef}/>
+        </div>
+
+        {/* Input */}
+        <div style={{
+          background: COLORS.cream, padding: "14px 18px",
+          borderTop: `1px solid ${COLORS.border}`,
+          display: "flex", gap: "10px",
+        }}>
+          <input value={input} onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && send()}
+            placeholder="Ask Dale a question…"
+            style={{
+              flex: 1, padding: "11px 14px",
+              border: `1px solid ${COLORS.border}`, borderRadius: "2px",
+              fontFamily: FONTS.serif, fontSize: "14px",
+              background: COLORS.creamLight, color: COLORS.text,
+              outline: "none",
+            }}/>
+          <button onClick={() => send()} disabled={loading || !input.trim()} style={{
+            background: COLORS.navy, color: COLORS.cream,
+            border: "none", padding: "0 22px",
+            fontFamily: FONTS.sans, fontSize: "12px", fontWeight: 600,
+            letterSpacing: "1px", textTransform: "uppercase",
+            cursor: loading ? "not-allowed" : "pointer",
+            opacity: loading || !input.trim() ? 0.5 : 1,
+            borderRadius: "2px",
+          }}>Send</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// DISCLOSURES PAGE — where Dale's voice leaks through
+// ============================================================
+function DisclosuresPage({ isMobile }) {
+  return (
+    <div style={{ background: COLORS.cream, paddingBottom: "64px" }}>
+      <PageHeader title="Disclosures" subtitle="Plain language. Plainly stated." isMobile={isMobile} />
+
+      <div style={{
+        maxWidth: "780px", margin: "0 auto",
+        padding: isMobile ? "48px 20px" : "72px 32px",
+        fontFamily: FONTS.serif, fontSize: "15.5px",
+        lineHeight: 1.75, color: COLORS.text,
+      }}>
+        <p><strong style={{color: COLORS.navy}}>Regulatory Status.</strong> Heartland Prosperity
+        Advisors is not currently registered as an investment advisor with the U.S. Securities
+        and Exchange Commission or with the Oklahoma Department of Securities. Our planning
+        services are offered on a fee-based, non-discretionary consulting basis. We are working
+        toward state registration as the practice scales.</p>
+
+        <p><strong style={{color: COLORS.navy}}>Specialty Platforms.</strong> The "Heartland
+        Innovation Platforms" referenced throughout this site — Oil &amp; Gas Convergence,
+        Precious Metals Digitization, Agricultural Disruption, QSR Technology, and Sovereign
+        Digital Assets — are research themes developed in-house. They are not formal indices.
+        They are not benchmarked against any third-party standard. Allocations to specialty
+        platforms (including the Elk City Land Trust and the Terry Bricker Precious Metals
+        Program) are not registered securities and are offered only to qualified clients
+        following a suitability review.</p>
+
+        <p><strong style={{color: COLORS.navy}}>Performance.</strong> Past performance is not
+        indicative of future results. Research note projections — including but not limited to
+        the 47% five-year annualized return target referenced in the Elk City thesis — are
+        based on proprietary models that have not been independently verified or audited. The
+        models are maintained by our lead analyst, Randy Holloway.</p>
+
+        <p><strong style={{color: COLORS.navy}}>Affiliated Parties.</strong> Terry Bricker
+        (Precious Metals Specialist) is the brother-in-law of Dale Bricker. The Terry Bricker
+        Precious Metals Program is operated as a separate business entity. Heartland Prosperity
+        Advisors receives a referral arrangement on client allocations to the Program. This
+        relationship is disclosed at engagement.</p>
+
+        <p><strong style={{color: COLORS.navy}}>Certifications.</strong> The "Certified Wealth
+        Strategist™" designation held by Dale Bricker was awarded through a continuing education
+        program in 2018. It is not a credential issued by the CFP Board, the CFA Institute, or
+        any state regulatory body. It is a designation Dale values personally.</p>
+
+        <p><strong style={{color: COLORS.navy}}>Communications.</strong> Heartland Prosperity
+        Advisors communicates with clients primarily by phone, in person, and by email. Our
+        firm email is hosted on a standard commercial provider. This is normal.</p>
+
+        <p><strong style={{color: COLORS.navy}}>Not Financial Advice.</strong> Content on this
+        website, in our research notes, and in our chat assistant is informational and reflects
+        the views and convictions of Dale Bricker and the Heartland Prosperity research team.
+        It is not personalized financial advice. Before acting on anything you read here, talk
+        to a licensed advisor in your state. Talk to your spouse. Talk to your pastor if that
+        is meaningful to you. We are not a substitute for any of those people.</p>
+
+        <p style={{
+          marginTop: "40px", paddingTop: "24px",
+          borderTop: `1px solid ${COLORS.border}`,
+          fontStyle: "italic", color: COLORS.textMuted, fontSize: "14px",
+        }}>
+          This page is updated as our practice evolves. Last reviewed: Q1 2026.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// CONTACT PAGE
+// ============================================================
+function ContactPage({ isMobile }) {
+  const [sent, setSent] = useState(false);
+  return (
+    <div style={{ background: COLORS.cream, paddingBottom: "80px" }}>
+      <PageHeader title="Contact" subtitle="Let's talk." isMobile={isMobile} />
+
+      <div style={{
+        maxWidth: "880px", margin: "0 auto",
+        padding: isMobile ? "48px 20px" : "72px 32px",
+        display: "grid",
+        gridTemplateColumns: isMobile ? "1fr" : "1.2fr 1fr",
+        gap: isMobile ? "40px" : "56px",
+      }}>
+        <div>
+          <h2 style={{
+            fontFamily: FONTS.display, fontSize: "24px",
+            color: COLORS.navy, fontWeight: 600, margin: "0 0 20px",
+          }}>Schedule a Discovery Call</h2>
+          <p style={{
+            fontFamily: FONTS.serif, fontSize: "16px",
+            color: COLORS.text, lineHeight: 1.7, marginBottom: "28px",
+          }}>Tell us a little about yourself and what brought you to our site.
+          We will respond within one business day, usually sooner.</p>
+
+          {sent ? (
+            <div style={{
+              background: COLORS.creamLight, border: `1px solid ${COLORS.ochre}`,
+              padding: "24px", borderRadius: "2px",
+            }}>
+              <div style={{
+                fontFamily: FONTS.display, fontSize: "18px",
+                color: COLORS.navy, fontWeight: 600, marginBottom: "10px",
+              }}>Message received.</div>
+              <p style={{
+                fontFamily: FONTS.serif, fontSize: "14px",
+                color: COLORS.text, lineHeight: 1.6, margin: 0,
+              }}>Dale will be in touch within one business day. Thank you for reaching out.</p>
+            </div>
+          ) : (
+            <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} style={{
+              display: "flex", flexDirection: "column", gap: "16px",
+            }}>
+              {[
+                { label: "Your Name", type: "text", required: true },
+                { label: "Email Address", type: "email", required: true },
+                { label: "City &amp; State", type: "text", required: false },
+              ].map((f, i) => (
+                <div key={i}>
+                  <label style={{
+                    display: "block", fontFamily: FONTS.sans,
+                    fontSize: "11px", letterSpacing: "1.5px",
+                    textTransform: "uppercase", color: COLORS.textMuted,
+                    marginBottom: "6px", fontWeight: 600,
+                  }} dangerouslySetInnerHTML={{__html: f.label + (f.required ? " *" : "")}}/>
+                  <input type={f.type} required={f.required} style={{
+                    width: "100%", padding: "11px 14px",
+                    border: `1px solid ${COLORS.border}`, borderRadius: "2px",
+                    fontFamily: FONTS.serif, fontSize: "15px",
+                    background: COLORS.creamLight, color: COLORS.text,
+                    outline: "none", boxSizing: "border-box",
+                  }}/>
+                </div>
+              ))}
+              <div>
+                <label style={{
+                  display: "block", fontFamily: FONTS.sans,
+                  fontSize: "11px", letterSpacing: "1.5px",
+                  textTransform: "uppercase", color: COLORS.textMuted,
+                  marginBottom: "6px", fontWeight: 600,
+                }}>How Can We Help? *</label>
+                <textarea required rows={4} style={{
+                  width: "100%", padding: "11px 14px",
+                  border: `1px solid ${COLORS.border}`, borderRadius: "2px",
+                  fontFamily: FONTS.serif, fontSize: "15px",
+                  background: COLORS.creamLight, color: COLORS.text,
+                  outline: "none", resize: "vertical", boxSizing: "border-box",
+                }}/>
+              </div>
+              <button type="submit" style={{
+                background: COLORS.navy, color: COLORS.cream,
+                border: "none", padding: "14px 28px",
+                fontFamily: FONTS.sans, fontSize: "13px", fontWeight: 600,
+                letterSpacing: "1px", textTransform: "uppercase",
+                cursor: "pointer", borderRadius: "2px",
+                alignSelf: "flex-start",
+              }}>Send Message</button>
+            </form>
+          )}
+        </div>
+
+        <div>
+          <h2 style={{
+            fontFamily: FONTS.display, fontSize: "20px",
+            color: COLORS.navy, fontWeight: 600, margin: "0 0 20px",
+          }}>Office</h2>
+          <div style={{
+            fontFamily: FONTS.serif, fontSize: "15px",
+            color: COLORS.text, lineHeight: 1.8, marginBottom: "28px",
+          }}>
+            Heartland Prosperity Advisors<br/>
+            3500 S Boulevard, Ste 3B #119<br/>
+            Edmond, OK 73013
+          </div>
+
+          <h2 style={{
+            fontFamily: FONTS.display, fontSize: "20px",
+            color: COLORS.navy, fontWeight: 600, margin: "0 0 14px",
+          }}>Email</h2>
+          <div style={{
+            fontFamily: FONTS.serif, fontSize: "15px",
+            color: COLORS.text, lineHeight: 1.8, marginBottom: "28px",
+          }}>
+            dale@heartlandprosperityadvisors.com
+          </div>
+
+          <h2 style={{
+            fontFamily: FONTS.display, fontSize: "20px",
+            color: COLORS.navy, fontWeight: 600, margin: "0 0 14px",
+          }}>Hours</h2>
+          <div style={{
+            fontFamily: FONTS.serif, fontSize: "15px",
+            color: COLORS.text, lineHeight: 1.8,
+          }}>
+            Monday – Friday<br/>
+            8:00 AM – 5:30 PM Central<br/>
+            <span style={{ color: COLORS.textMuted, fontSize: "13px", fontStyle: "italic" }}>
+              Wednesday mornings: Bible study at First Baptist Edmond
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// SHARED COMPONENTS
+// ============================================================
+function PageHeader({ title, subtitle, isMobile }) {
+  return (
+    <div style={{
+      background: COLORS.navy, color: COLORS.cream,
+      padding: isMobile ? "48px 20px 40px" : "72px 32px 56px",
+      borderBottom: `3px solid ${COLORS.ochre}`,
+      position: "relative", overflow: "hidden",
+    }}>
+      <FlagBackdrop/>
+      <div style={{
+        maxWidth: "1180px", margin: "0 auto",
+        position: "relative", zIndex: 2,
+      }}>
+        <h1 style={{
+          fontFamily: FONTS.display,
+          fontSize: isMobile ? "32px" : "42px",
+          fontWeight: 400, margin: "0 0 12px",
+          color: COLORS.cream,
+        }}>{title}</h1>
+        <p style={{
+          fontFamily: FONTS.serif, fontSize: isMobile ? "16px" : "18px",
+          color: COLORS.ochreLight, margin: 0, fontStyle: "italic",
+        }}>{subtitle}</p>
+      </div>
+    </div>
+  );
+}
+
+function Footer({ setPage, isMobile }) {
+  return (
+    <footer style={{
+      background: COLORS.navyDark, color: COLORS.cream,
+      padding: isMobile ? "40px 20px 28px" : "56px 32px 32px",
+      borderTop: `3px solid ${COLORS.ochre}`,
+    }}>
+      <div style={{ maxWidth: "1180px", margin: "0 auto" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr 1fr",
+          gap: isMobile ? "28px" : "48px", marginBottom: "32px",
+        }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+              <HeartlandLogo size={36}/>
+              <div>
+                <div style={{ fontFamily: FONTS.display, fontSize: "17px",
+                  fontWeight: 600, color: COLORS.cream }}>Heartland Prosperity</div>
+                <div style={{ fontFamily: FONTS.sans, fontSize: "10px",
+                  letterSpacing: "1.5px", color: COLORS.ochreLight,
+                  textTransform: "uppercase", marginTop: "2px" }}>Advisors · Est. 2014</div>
+              </div>
+            </div>
+            <p style={{
+              fontFamily: FONTS.serif, fontSize: "14px",
+              color: "rgba(245,241,232,0.65)", lineHeight: 1.7,
+              maxWidth: "380px",
+            }}>Independent fiduciary planning, retirement income strategy, and disruptive
+            innovation research for the families of Central Oklahoma.</p>
+          </div>
+
+          <div>
+            <div style={{
+              fontFamily: FONTS.sans, fontSize: "11px",
+              letterSpacing: "1.5px", textTransform: "uppercase",
+              color: COLORS.ochreLight, fontWeight: 600, marginBottom: "14px",
+            }}>Firm</div>
+            {[
+              {id: "about", label: "About"},
+              {id: "services", label: "Services"},
+              {id: "research", label: "Research"},
+              {id: "contact", label: "Contact"},
+            ].map(l => (
+              <a key={l.id} onClick={() => { setPage(l.id); window.scrollTo({top:0,behavior:"instant"}); }} style={{
+                display: "block", fontFamily: FONTS.serif, fontSize: "14px",
+                color: "rgba(245,241,232,0.75)", marginBottom: "8px",
+                cursor: "pointer", textDecoration: "none",
+              }}>{l.label}</a>
+            ))}
+          </div>
+
+          <div>
+            <div style={{
+              fontFamily: FONTS.sans, fontSize: "11px",
+              letterSpacing: "1.5px", textTransform: "uppercase",
+              color: COLORS.ochreLight, fontWeight: 600, marginBottom: "14px",
+            }}>Legal</div>
+            <a onClick={() => { setPage("disclosures"); window.scrollTo({top:0,behavior:"instant"}); }} style={{
+              display: "block", fontFamily: FONTS.serif, fontSize: "14px",
+              color: "rgba(245,241,232,0.75)", marginBottom: "8px", cursor: "pointer",
+            }}>Disclosures</a>
+            <div style={{
+              fontFamily: FONTS.serif, fontSize: "13px",
+              color: "rgba(245,241,232,0.55)", marginTop: "16px", lineHeight: 1.6,
+            }}>
+              3500 S Boulevard, Ste 3B #119<br/>
+              Edmond, OK 73013
+            </div>
+          </div>
+        </div>
+
+        <div style={{
+          borderTop: `1px solid rgba(168,132,58,0.25)`,
+          paddingTop: "24px", display: "flex", justifyContent: "space-between",
+          flexWrap: "wrap", gap: "12px",
+        }}>
+          <div style={{
+            fontFamily: FONTS.sans, fontSize: "11px",
+            color: "rgba(245,241,232,0.45)", letterSpacing: "0.5px",
+          }}>
+            © 2014–2026 Heartland Prosperity Advisors. All rights reserved.
+          </div>
+          <div style={{
+            fontFamily: FONTS.sans, fontSize: "11px",
+            color: "rgba(245,241,232,0.45)", letterSpacing: "0.5px",
+            fontStyle: "italic",
+          }}>
+            Faith. Family. Fiduciary.
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ============================================================
+// MAIN APP
+// ============================================================
+export default function HeartlandProsperity() {
+  const [page, setPage] = useState("home");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // Load Source Serif Pro from Google Fonts
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap";
+    document.head.appendChild(link);
+    return () => { document.head.removeChild(link); };
+  }, []);
 
   return (
     <div style={{
-      background: "#1e0e02",
-      height: "100dvh",
-      display: "flex",
-      flexDirection: "column",
-      fontFamily: "'Georgia', 'Times New Roman', serif",
-      color: "#f0dfc0",
-      overflow: "hidden",
-      position: "relative",
+      minHeight: "100vh", background: COLORS.cream,
+      color: COLORS.text, fontFamily: FONTS.serif,
     }}>
-
-      {/* Ambient */}
-      <div style={{
-        position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0,
-        background: `radial-gradient(ellipse 80% 50% at 50% 100%, rgba(160,60,0,0.15) 0%, transparent 65%),
-          radial-gradient(ellipse 40% 40% at 90% 10%, rgba(200,120,0,0.08) 0%, transparent 55%)`,
-      }} />
-
-      {/* Mobile sidebar overlay */}
-      {isMobile && sidebarOpen && (
-        <div onClick={() => setSidebarOpen(false)} style={{
-          position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)", zIndex: 50,
-        }} />
-      )}
-
-      {/* Mobile sidebar drawer */}
-      {isMobile && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, bottom: 0, width: "290px",
-          background: "rgba(10,4,1,0.99)",
-          borderRight: "2px solid rgba(130,60,5,0.4)",
-          zIndex: 60,
-          transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
-          transition: "transform 0.25s ease",
-          overflowY: "auto",
-          display: "flex", flexDirection: "column",
-        }}>
-          <div style={{
-            padding: "14px 16px",
-            borderBottom: "2px solid rgba(130,60,5,0.3)",
-            display: "flex", justifyContent: "space-between", alignItems: "center",
-            background: "rgba(30,10,2,0.8)",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <FirmLogo size={28} />
-              <span style={{ color: "#f5d060", fontWeight: "bold", fontSize: "14px" }}>Dale's Menu</span>
-            </div>
-            <button onClick={() => setSidebarOpen(false)} style={{
-              background: "none", border: "1px solid rgba(180,100,10,0.3)", color: "#c8860a",
-              fontSize: "16px", cursor: "pointer", padding: "4px 10px", borderRadius: "4px",
-            }}>✕</button>
-          </div>
-          <SidebarContent />
-        </div>
-      )}
-
-      {/* TICKER */}
-      <div style={{
-        background: "#8B1a0a", borderBottom: "3px solid #c8860a",
-        padding: "5px 0", overflow: "hidden",
-        position: "relative", zIndex: 10, flexShrink: 0,
-      }}>
-        <div ref={tickerRef} style={{
-          whiteSpace: "nowrap", display: "inline-block",
-          fontFamily: "'Georgia', serif",
-          fontSize: isMobile ? "9px" : "10.5px",
-          fontWeight: "bold", letterSpacing: "1px", color: "#f5d060",
-        }}>
-          {tickerFull}
-        </div>
-      </div>
-
-      {/* HEADER */}
-      <header style={{
-        position: "relative",
-        background: "linear-gradient(180deg, #2a1005 0%, #1e0e02 100%)",
-        borderBottom: "3px solid #8B4500",
-        zIndex: 10, flexShrink: 0, overflow: "hidden",
-        boxShadow: "0 4px 24px rgba(0,0,0,0.6)",
-      }}>
-        <GrainBg />
-        <div style={{ height: "5px", background: "repeating-linear-gradient(90deg, #8B1a0a 0px, #8B1a0a 40px, #c8860a 40px, #c8860a 41px)", opacity: 0.6 }} />
-
-        <div style={{
-          position: "relative", zIndex: 2,
-          padding: isMobile ? "10px 14px 0" : "18px 28px 0",
-          display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px",
-        }}>
-          {/* Brand */}
-          <div style={{ display: "flex", alignItems: "center", gap: isMobile ? "8px" : "16px", flex: 1, minWidth: 0 }}>
-            {isMobile ? (
-              <button onClick={() => setSidebarOpen(true)} style={{
-                background: "rgba(80,30,5,0.6)", border: "1.5px solid rgba(180,100,10,0.4)",
-                color: "#f5d060", borderRadius: "6px", padding: "8px 11px",
-                fontSize: "17px", cursor: "pointer", flexShrink: 0,
-                lineHeight: 1,
-              }}>☰</button>
-            ) : null}
-            <FirmLogo size={isMobile ? 34 : 56} />
-            {!isMobile && <OilDerrick />}
-            <div style={{ minWidth: 0 }}>
-              <div style={{
-                fontSize: isMobile ? "15px" : "28px",
-                fontWeight: "bold", color: "#f5d060",
-                textShadow: "2px 2px 0 rgba(0,0,0,0.7)",
-                lineHeight: 1.2,
-                whiteSpace: isMobile ? "normal" : "nowrap",
-              }}>
-                {isMobile ? "Heartland Prosperity Advisors" : "Heartland Prosperity Advisors"}
-              </div>
-              <div style={{
-                color: "rgba(200,134,10,0.65)", fontSize: "8px",
-                letterSpacing: isMobile ? "1px" : "3px",
-                textTransform: "uppercase", marginTop: "4px",
-              }}>
-                {isMobile ? "EDMOND, OK · SINCE 2014" : "EDMOND, OKLAHOMA · DISRUPTIVE INNOVATION SINCE 2014"}
-              </div>
-              {!isMobile && (
-                <div style={{ display: "flex", gap: "6px", marginTop: "5px", alignItems: "center" }}>
-                  {["★","★","★","★","★"].map((s,i) => (
-                    <span key={i} style={{ color: "#c8860a", fontSize: "10px" }}>{s}</span>
-                  ))}
-                  <span style={{ color: "rgba(200,134,10,0.5)", fontSize: "9px", marginLeft: "3px" }}>
-                    4.9 Stars on Google (12 reviews, 9 from family)
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Dale card */}
-          <div style={{
-            display: "flex", alignItems: "center", gap: isMobile ? "7px" : "13px",
-            background: "rgba(80,30,5,0.6)", border: "2px solid rgba(180,100,10,0.4)",
-            borderRadius: "10px", padding: isMobile ? "7px 10px" : "12px 16px", flexShrink: 0,
-          }}>
-            <div style={{
-              width: isMobile ? "30px" : "50px", height: isMobile ? "30px" : "50px",
-              borderRadius: "50%", background: "radial-gradient(circle, rgba(160,70,10,0.8), rgba(60,20,5,0.95))",
-              border: "2px solid rgba(200,140,20,0.5)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: isMobile ? "15px" : "24px", flexShrink: 0,
-            }}>🤠</div>
-            <div>
-              <div style={{ fontSize: isMobile ? "11px" : "15px", color: "#f0dfc0", fontWeight: "bold" }}>Dale Bricker</div>
-              <div style={{ fontSize: "8.5px", color: "rgba(200,140,20,0.65)", marginTop: "2px" }}>
-                {isMobile ? "Chief Investment Strategist" : "Founder & Chief Investment Strategist"}
-              </div>
-              {!isMobile && <div style={{ fontSize: "9px", color: "rgba(180,110,10,0.55)", marginTop: "2px" }}>Certified Wealth Strategist™ (Tulsa Marriott, 2018)</div>}
-              <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "3px" }}>
-                <div style={{
-                  width: "6px", height: "6px", borderRadius: "50%",
-                  background: blink ? "#f5c030" : "#c89010",
-                  boxShadow: blink ? "0 0 8px #f5c030" : "none",
-                  transition: "all 0.1s", flexShrink: 0,
-                }} />
-                <span style={{ fontSize: "7.5px", color: "#c89010", letterSpacing: "0.5px" }}>
-                  {isMobile ? "3 SPOTS LEFT" : "AVAILABLE NOW — 3 SPOTS THIS WEEK"}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Sub-nav desktop only */}
-        {!isMobile && (
-          <div style={{
-            position: "relative", zIndex: 2,
-            display: "flex", borderTop: "1px solid rgba(130,60,5,0.3)", marginTop: "14px",
-          }}>
-            {["THE BRICKER BLUEPRINT", "HPA INNOVATION FUND ⚡", "PATRIOT PORTFOLIO 🇺🇸", "TERRY'S GOLD COINS", "ELK CITY LAND TRUST", "BOOK A FREE CALL"].map((item, i) => (
-              <div key={i} style={{
-                padding: "9px 15px", fontSize: "9px", letterSpacing: "0.5px",
-                color: i === 1 ? "#f5c030" : "rgba(200,140,20,0.5)",
-                cursor: "pointer", borderRight: "1px solid rgba(130,60,5,0.2)",
-                transition: "color 0.15s, background 0.15s",
-                whiteSpace: "nowrap", fontWeight: i === 1 ? "bold" : "normal",
-              }}
-                onMouseEnter={e => { e.currentTarget.style.color = "#f5d060"; e.currentTarget.style.background = "rgba(130,60,5,0.2)"; }}
-                onMouseLeave={e => { e.currentTarget.style.color = i === 1 ? "#f5c030" : "rgba(200,140,20,0.5)"; e.currentTarget.style.background = "transparent"; }}
-              >{item}</div>
-            ))}
-          </div>
-        )}
-      </header>
-
-      {/* MAIN */}
-      <div style={{ flex: 1, display: "flex", overflow: "hidden", position: "relative", zIndex: 5 }}>
-
-        {/* Desktop sidebar */}
-        {!isMobile && (
-          <div style={{
-            width: "200px", flexShrink: 0,
-            background: "rgba(10,4,1,0.85)",
-            borderRight: "2px solid rgba(130,60,5,0.3)",
-            display: "flex", flexDirection: "column", overflowY: "auto",
-          }}>
-            <SidebarContent />
-          </div>
-        )}
-
-        {/* CHAT AREA */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-
-          {/* Messages */}
-          <div style={{
-            flex: 1, overflowY: "auto",
-            padding: isMobile ? "14px 12px" : "24px",
-            display: "flex", flexDirection: "column",
-            gap: isMobile ? "12px" : "18px",
-            WebkitOverflowScrolling: "touch",
-          }}>
-
-            {/* Welcome screen */}
-            {messages.length === 0 && (
-              <div style={{ display: "flex", justifyContent: "center", paddingTop: isMobile ? "4px" : "10px" }}>
-                <div style={{
-                  maxWidth: isMobile ? "100%" : "580px", width: "100%",
-                  background: "rgba(15,6,1,0.9)",
-                  border: "2px solid rgba(160,90,10,0.35)",
-                  borderRadius: "12px",
-                  padding: isMobile ? "18px 16px" : "34px 32px",
-                  boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
-                }}>
-                  <div style={{ textAlign: "center", fontSize: "28px", marginBottom: "8px" }}>🤠</div>
-                  <div style={{
-                    fontSize: isMobile ? "17px" : "23px",
-                    fontWeight: "bold", color: "#f5d060",
-                    textAlign: "center", marginBottom: "8px",
-                  }}>
-                    Hey there, partner! Dale Bricker here.
-                  </div>
-                  <div style={{
-                    fontSize: isMobile ? "12px" : "13px",
-                    color: "rgba(200,160,90,0.7)",
-                    lineHeight: 1.7, textAlign: "center", marginBottom: "18px",
-                  }}>
-                    I founded Heartland Prosperity Advisors in 2014 after watching families lose everything in 2008. The market doesn't understand what it doesn't understand. Randy's been on the Elk City thesis for eighteen months. The S&P 500 is a fine instrument for people who are fine with fine.
-                  </div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "center" }}>
-                    {STARTERS.map((s, i) => (
-                      <button key={i} onClick={() => send(s)} style={{
-                        background: "rgba(100,40,5,0.35)",
-                        border: "1px solid rgba(160,90,10,0.3)",
-                        color: "rgba(210,160,70,0.8)",
-                        borderRadius: "6px",
-                        padding: isMobile ? "10px 12px" : "8px 14px",
-                        fontSize: isMobile ? "12px" : "11px",
-                        cursor: "pointer", fontFamily: "'Georgia', serif",
-                        transition: "all 0.15s", textAlign: "left",
-                      }}>
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Message bubbles */}
-            {messages.map((m, i) => (
-              <div key={i} style={{
-                display: "flex",
-                justifyContent: m.role === "user" ? "flex-end" : "flex-start",
-                gap: isMobile ? "8px" : "12px",
-                alignItems: "flex-start",
-              }}>
-                {m.role === "assistant" && (
-                  <div style={{
-                    width: isMobile ? "30px" : "40px", height: isMobile ? "30px" : "40px",
-                    borderRadius: "50%",
-                    background: "radial-gradient(circle, rgba(140,60,10,0.85), rgba(40,15,3,0.95))",
-                    border: "2px solid rgba(180,100,10,0.45)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: isMobile ? "14px" : "19px", flexShrink: 0,
-                  }}>🤠</div>
-                )}
-                <div style={{
-                  maxWidth: isMobile ? "88%" : "70%",
-                  background: m.role === "user" ? "rgba(100,35,5,0.45)" : "rgba(12,5,1,0.8)",
-                  border: m.role === "user" ? "1px solid rgba(160,90,10,0.35)" : "1px solid rgba(120,60,5,0.25)",
-                  borderRadius: m.role === "user" ? "14px 3px 14px 14px" : "3px 14px 14px 14px",
-                  padding: isMobile ? "11px 13px" : "14px 18px",
-                }}>
-                  {m.role === "assistant" && (
-                    <div style={{
-                      fontSize: "7.5px", letterSpacing: "1.5px",
-                      color: "rgba(180,110,10,0.5)",
-                      marginBottom: "7px", textTransform: "uppercase",
-                    }}>
-                      DALE BRICKER · HEARTLAND PROSPERITY ADVISORS
-                    </div>
-                  )}
-                  <div style={{
-                    fontSize: isMobile ? "13px" : "13.5px",
-                    lineHeight: 1.8, color: m.role === "user" ? "#e0c888" : "#d8c09a",
-                    whiteSpace: "pre-wrap", fontFamily: "'Georgia', serif",
-                  }}>
-                    {m.content}
-                  </div>
-                </div>
-                {m.role === "user" && (
-                  <div style={{
-                    width: isMobile ? "30px" : "40px", height: isMobile ? "30px" : "40px",
-                    borderRadius: "50%", background: "rgba(50,18,3,0.65)",
-                    border: "2px solid rgba(120,60,5,0.3)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: isMobile ? "14px" : "18px", flexShrink: 0,
-                  }}>😐</div>
-                )}
-              </div>
-            ))}
-
-            {/* Loading */}
-            {loading && (
-              <div style={{ display: "flex", gap: isMobile ? "8px" : "12px", alignItems: "flex-start" }}>
-                <div style={{
-                  width: isMobile ? "30px" : "40px", height: isMobile ? "30px" : "40px",
-                  borderRadius: "50%",
-                  background: "radial-gradient(circle, rgba(140,60,10,0.85), rgba(40,15,3,0.95))",
-                  border: "2px solid rgba(180,100,10,0.45)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: isMobile ? "14px" : "19px", flexShrink: 0,
-                }}>🤠</div>
-                <div style={{
-                  background: "rgba(12,5,1,0.8)", border: "1px solid rgba(120,60,5,0.25)",
-                  borderRadius: "3px 14px 14px 14px", padding: isMobile ? "11px 13px" : "14px 18px",
-                }}>
-                  <div style={{ fontSize: "7.5px", letterSpacing: "1.5px", color: "rgba(180,110,10,0.45)", marginBottom: "8px" }}>
-                    DALE BRICKER · THINKIN' IT OVER
-                  </div>
-                  <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
-                    {[0,1,2].map(j => (
-                      <div key={j} style={{
-                        width: "7px", height: "7px", borderRadius: "50%",
-                        background: "rgba(200,130,10,0.7)",
-                        animation: `bounce 1.2s ease-in-out ${j * 0.22}s infinite`,
-                      }} />
-                    ))}
-                    <span style={{ color: "rgba(180,120,30,0.5)", fontSize: "11px", marginLeft: "6px", fontStyle: "italic" }}>
-                      hold on, let me call Terry...
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* INPUT BAR */}
-          <div style={{
-            padding: isMobile ? "10px 12px" : "16px 24px",
-            borderTop: "2px solid rgba(130,60,5,0.3)",
-            background: "rgba(8,3,1,0.95)",
-            display: "flex", gap: "8px", flexShrink: 0,
-          }}>
-            <input
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && !e.shiftKey && send()}
-              placeholder={isMobile ? "Ask Dale anything..." : "Ask Dale anything — he's never stumped and never wrong..."}
-              disabled={loading}
-              style={{
-                flex: 1,
-                background: "rgba(30,10,2,0.7)",
-                border: "1.5px solid rgba(130,60,5,0.3)",
-                borderRadius: "8px",
-                padding: isMobile ? "13px 14px" : "12px 16px",
-                color: "#e0c888",
-                fontSize: isMobile ? "16px" : "13px",
-                fontFamily: "'Georgia', serif",
-                outline: "none",
-                WebkitAppearance: "none",
-              }}
-              onFocus={e => e.target.style.borderColor = "rgba(200,130,10,0.6)"}
-              onBlur={e => e.target.style.borderColor = "rgba(130,60,5,0.3)"}
-            />
-            <button
-              onClick={() => send()}
-              disabled={loading || !input.trim()}
-              style={{
-                background: loading || !input.trim() ? "rgba(40,15,3,0.5)" : "linear-gradient(135deg, #9a5008, #6a3205)",
-                color: loading || !input.trim() ? "rgba(150,90,20,0.35)" : "#f5d060",
-                border: "1.5px solid rgba(160,90,10,0.4)",
-                borderRadius: "8px",
-                padding: isMobile ? "13px 18px" : "12px 22px",
-                fontSize: isMobile ? "16px" : "11px",
-                fontWeight: "bold",
-                cursor: loading || !input.trim() ? "not-allowed" : "pointer",
-                transition: "all 0.15s",
-                whiteSpace: "nowrap",
-                flexShrink: 0,
-              }}
-            >
-              {isMobile ? "→" : "Talk to Dale →"}
-            </button>
-          </div>
-
-          {/* FOOTER */}
-          <div style={{
-            padding: isMobile ? "5px 12px" : "7px 24px",
-            background: "rgba(4,1,0,0.97)",
-            borderTop: "1px solid rgba(100,45,5,0.25)",
-            color: "rgba(100,55,10,0.4)",
-            fontSize: "7.5px", letterSpacing: "0.3px",
-            display: "flex", flexDirection: isMobile ? "column" : "row",
-            justifyContent: "space-between", gap: "2px",
-          }}>
-            <span>HEARTLAND PROSPERITY ADVISORS LLC · NOT A REGISTERED INVESTMENT ADVISOR · NOT A REAL FIRM · SATIRE</span>
-            <span>Terry's coins are not securities. Randy is not a licensed analyst. Wright's Law does not apply to gold coins.</span>
-          </div>
-        </div>
-      </div>
-
-      <style>{`
-        * { box-sizing: border-box; }
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); opacity: 0.5; }
-          50% { transform: translateY(-5px); opacity: 1; }
-        }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: rgba(8,3,1,0.6); }
-        ::-webkit-scrollbar-thumb { background: rgba(130,60,5,0.4); border-radius: 2px; }
-        input, button { -webkit-tap-highlight-color: transparent; }
-      `}</style>
+      <Nav currentPage={page} setPage={setPage} isMobile={isMobile}/>
+      {page === "home" && <HomePage setPage={setPage} isMobile={isMobile}/>}
+      {page === "about" && <AboutPage isMobile={isMobile}/>}
+      {page === "services" && <ServicesPage setPage={setPage} isMobile={isMobile}/>}
+      {page === "research" && <ResearchPage isMobile={isMobile}/>}
+      {page === "disclosures" && <DisclosuresPage isMobile={isMobile}/>}
+      {page === "contact" && <ContactPage isMobile={isMobile}/>}
+      <Footer setPage={setPage} isMobile={isMobile}/>
     </div>
   );
 }

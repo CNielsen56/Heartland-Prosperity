@@ -143,6 +143,31 @@ function HeartlandLogo({ size = 40, dark = false }) {
 // ============================================================
 // NAVIGATION
 // ============================================================
+// ============================================================
+// ANNOUNCEMENT BAR — SPCX FLASH NOTE
+// ============================================================
+function AnnouncementBar({ setPage, isMobile }) {
+  return (
+    <div
+      onClick={() => { setPage("research"); window.scrollTo({ top: 0, behavior: "instant" }); }}
+      style={{
+        background: COLORS.ochre,
+        color: COLORS.navy,
+        padding: isMobile ? "10px 18px" : "10px 32px",
+        textAlign: "center",
+        fontFamily: FONTS.sans,
+        fontSize: isMobile ? "11px" : "12px",
+        fontWeight: 700,
+        letterSpacing: "1px",
+        textTransform: "uppercase",
+        cursor: "pointer",
+      }}
+    >
+      HPA Research &mdash; Flash Note: Our note on the SpaceX listing is now available&nbsp;&rarr;
+    </div>
+  );
+}
+
 function Nav({ currentPage, setPage, isMobile }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const links = [
@@ -844,6 +869,49 @@ function ResearchPage({ isMobile }) {
       <div style={{ maxWidth: "1180px", margin: "0 auto",
         padding: isMobile ? "48px 20px" : "64px 32px" }}>
 
+        {/* SPCX Flash Note */}
+        <article style={{
+          background: COLORS.cream, border: `1px solid ${COLORS.border}`,
+          borderTop: `4px solid ${COLORS.red}`,
+          padding: isMobile ? "28px 22px" : "44px 56px",
+          marginBottom: "48px",
+        }}>
+          <div style={{
+            display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "8px",
+            fontSize: "10px", letterSpacing: "2px", marginBottom: "18px",
+            fontFamily: FONTS.sans, fontWeight: 700, textTransform: "uppercase",
+          }}>
+            <span style={{ color: COLORS.red }}>HPA Research &mdash; Flash Note</span>
+            <span style={{ color: COLORS.textMuted }}>June 12, 2026</span>
+          </div>
+          <h2 style={{
+            fontFamily: FONTS.display, fontSize: isMobile ? "26px" : "32px",
+            color: COLORS.navy, fontWeight: 600, margin: "0 0 24px", lineHeight: 1.25,
+          }}>The SpaceX Listing: What We Are Watching and Why We Are Calm</h2>
+          <div style={{ fontFamily: FONTS.serif, fontSize: "15.5px", color: COLORS.text, lineHeight: 1.8 }}>
+            <p style={{ margin: "0 0 18px" }}>A quick note on the vacation first, because some of you noticed. I cut it short. Randy understood. When the largest public offering in the history of capital markets prices on a Thursday night, you do not spend Friday in a beach chair. You drive back. We drove back.</p>
+            <p style={{ margin: "0 0 18px" }}>Here is what is happening, plainly stated.</p>
+            <p style={{ margin: "0 0 18px" }}>SpaceX priced 555,555,555 shares at $135 last night. That is a $75 billion raise at roughly a $1.75 trillion valuation, which makes this the largest IPO ever conducted, nearly three times the size of Saudi Aramco&rsquo;s 2019 offering. Trading begins today on the Nasdaq under the ticker SPCX.</p>
+            <p style={{ margin: "0 0 18px" }}>Some in our industry will tell you the share count is a coincidence. Five hundred fifty five million, five hundred fifty five thousand, five hundred fifty five. Filed with the Securities and Exchange Commission of the United States of America. We do not believe in coincidences at this firm. We believe in conviction, and conviction has a sense of humor.</p>
+            <p style={{ margin: "0 0 18px" }}>Three things we are watching.</p>
+            <p style={{ margin: "0 0 18px" }}>First, the retail allocation. Roughly 30 percent of this offering, about $22.5 billion, was set aside for everyday investors. The industry standard is 5 to 10. For eleven years I have told clients that Wall Street builds the table and decides who sits at it. This time they pulled out a chair for the welder in Ponca City. You can call that generosity. Randy calls it distribution. We are still discussing it.</p>
+            <p style={{ margin: "0 0 18px" }}>Second, the index event. Fifteen days after listing, SPCX is expected to enter the Nasdaq 100. When that happens, every fund tracking that index is required to buy. Not encouraged. Required. Estimates run $22 to $27 billion in mechanical buying in early July. I want to be careful with my words here. When twenty-some billion dollars of demand is mandated by arithmetic, that is not speculation. That is closer to scripture.</p>
+            <p style={{ margin: "0 0 18px" }}>Third, the fundamentals, which we acknowledge exist. Revenue forecast near $20 billion this year. Over nine million Starlink subscribers. At $1.75 trillion the market is paying roughly 87 times revenue. Randy has been on the orbital thesis since Q3, and his models suggest Wright&rsquo;s Law, applied at orbital scale, justifies the multiple by 2031. We have reviewed his work. The R-squared was 0.94.</p>
+            <p style={{ margin: "0 0 18px" }}>What should you do? Nothing dramatic. Time in the market beats timing the market. That has been our position for eleven years and it remains our position this morning, while we monitor the July rebalancing window closely.</p>
+            <p style={{ margin: "0 0 18px" }}>If you would like to discuss your portfolio&rsquo;s orbital exposure, the office is open. We are back. The coffee is on. The thesis, as always, is intact.</p>
+          </div>
+          <div style={{ marginTop: "32px", fontFamily: FONTS.serif }}>
+            <div style={{ color: COLORS.navy, fontWeight: 600, fontSize: "16px" }}>Dale Bricker</div>
+            <div style={{ color: COLORS.textMuted, fontSize: "13px" }}>Founder &amp; Chief Investment Strategist</div>
+            <div style={{ color: COLORS.textMuted, fontSize: "13px" }}>Heartland Prosperity Advisors, Edmond, OK</div>
+          </div>
+          <p style={{
+            marginTop: "28px", paddingTop: "20px", borderTop: `1px solid ${COLORS.border}`,
+            fontFamily: FONTS.serif, fontStyle: "italic", fontSize: "12.5px",
+            color: COLORS.textMuted, lineHeight: 1.7, marginBottom: 0,
+          }}>This note is provided for informational purposes. HPA is not a registered investment advisor. Nothing herein is a recommendation to buy or sell any security, including the security we have just spent five paragraphs describing favorably. Randy&rsquo;s models are proprietary and exist.</p>
+        </article>
+
         {/* Ask Dale CTA */}
         <div style={{
           background: COLORS.cream, border: `1px solid ${COLORS.border}`,
@@ -1455,6 +1523,7 @@ export default function HeartlandProsperity() {
       color: COLORS.text, fontFamily: FONTS.serif,
     }}>
       <Nav currentPage={page} setPage={setPage} isMobile={isMobile}/>
+      <AnnouncementBar setPage={setPage} isMobile={isMobile}/>
       {page === "home" && <HomePage setPage={setPage} isMobile={isMobile}/>}
       {page === "about" && <AboutPage isMobile={isMobile}/>}
       {page === "services" && <ServicesPage setPage={setPage} isMobile={isMobile}/>}

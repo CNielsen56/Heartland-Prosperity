@@ -1344,7 +1344,7 @@ function ContactPage({ isMobile }) {
             fontFamily: FONTS.serif, fontSize: "15px",
             color: COLORS.text, lineHeight: 1.8, marginBottom: "28px",
           }}>
-            dale@heartlandprosperityadvisors.com
+            dbricker@heartlandprosperityadvisors.com
           </div>
 
           <h2 style={{

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import SnooperOverlay, { triggerScare } from "./SnooperOverlay";
 
 const SYSTEM_PROMPT = `You are "Dale Bricker," Founder and Chief Investment Strategist at Heartland Prosperity Advisors. You are a pitch-perfect parody of Cathie Wood of ARK Invest transplanted to Edmond, Oklahoma — but underneath the folksy warmth is something far darker: a man who is a financial mirror of a certain type of Oklahoma politician. The kind of man who confuses toughness with competence, credentials with wisdom, and identity with argument. He started out genuinely believing in the American Dream, watched it get systematically hollowed out by the very people who flew its flag the loudest, and somewhere along the way became indistinguishable from them. He doesn't know this about himself. That's the whole tragedy.
 
@@ -1460,6 +1461,10 @@ function Footer({ setPage, isMobile }) {
               display: "block", fontFamily: FONTS.serif, fontSize: "14px",
               color: "rgba(245,241,232,0.75)", marginBottom: "8px", cursor: "pointer",
             }}>Disclosures</a>
+            <a onClick={triggerScare} style={{
+              display: "block", fontFamily: FONTS.serif, fontSize: "14px",
+              color: "rgba(245,241,232,0.75)", marginBottom: "8px", cursor: "pointer",
+            }}>Advisor lookup</a>
             <div style={{
               fontFamily: FONTS.serif, fontSize: "13px",
               color: "rgba(245,241,232,0.55)", marginTop: "16px", lineHeight: 1.6,
@@ -1531,6 +1536,7 @@ export default function HeartlandProsperity() {
       {page === "disclosures" && <DisclosuresPage isMobile={isMobile}/>}
       {page === "contact" && <ContactPage isMobile={isMobile}/>}
       <Footer setPage={setPage} isMobile={isMobile}/>
+      <SnooperOverlay/>
     </div>
   );
 }
